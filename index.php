@@ -26,9 +26,9 @@ if (isset($_GET['id'])) {
 // ページタイトルの設定
 $title = isset($_GET['id']) ? 'ID: ' . $_GET['id'] . 'のいいねツイート一覧' : 'いいねツイート取得システム';
 
-echo('<pre>');
-v($likes);
-echo('</pre>');
+// echo('<pre>');
+// v($likes);
+// echo('</pre>');
 ?>
 <!DOCTYPE html>
 <head>
