@@ -3,6 +3,7 @@ use Abraham\TwitterOAuth\TwitterOAuth;
 
 // APIキー、トークンの設定
 function getTweets($id, $time) {
+
   // APIキーとトークン
   $API_KEY = 'b7fAIh1aBSkWVN26iVe1o3Sbu';
   $API_KEY_SECRET = '3pWPuIhOV57PL0LPL3F3TO5yiiw6mMwrRUzcYVbd4XSSYsZsWQ';
@@ -10,7 +11,7 @@ function getTweets($id, $time) {
 
   // 「いいね」ツイート一覧のエンドポイント(URL)
   $endPoint = 'favorites/list';
-  
+
   // APIキーとトークンを用いてTwitterOAuthに接続
   $connection = new TwitterOAuth($API_KEY, $API_KEY_SECRET, $ACCESS_TOKEN);
 
@@ -33,9 +34,7 @@ function getTweets($id, $time) {
     $posted_date = date('Y-m-d H:i:s', strtotime((string) $l->created_at));
 
     // 投稿日時がGETで取得した日付より古い場合、キューへの挿入を終了
-    if ($posted_date < $getTime) {
-      break;
-    }
+    if ($posted_date < $getTime) break;
 
     // 画像付きツイートでない場合、キューに挿入しない
     if (!isset($l->extended_entities)) continue;
