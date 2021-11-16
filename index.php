@@ -2,6 +2,11 @@
 require ('vendor/autoload.php');
 require ('apiset.php');
 
+// ダンプの簡略化
+function v($arg) {
+  return var_dump($arg);
+}
+
 // URL引数idが空だった場合、初期表示にする
 if (isset($_GET['id']) && $_GET['id'] == '') {
   header('../', true, 303);
@@ -10,9 +15,7 @@ if (isset($_GET['id']) && $_GET['id'] == '') {
 
 if (isset($_GET['id'])) {
   // 日付を英語の日付にフォーマット
-  // $time = date('l F j h:i:s yyyy',  $_GET['time']);
-  // var_dump($time);
-  $likes = getTweets($_GET['id']);
+  $likes = getTweets($_GET['id'], $_GET['time']);
 }
 
 // var_dump($_GET);
@@ -20,9 +23,9 @@ if (isset($_GET['id'])) {
 // ページタイトルの設定
 $title = isset($_GET['id']) ? 'ID: ' . $_GET['id'] . 'のいいねツイート一覧' : 'いいねツイート取得システム';
 
-// echo('<pre>');
-// var_dump($likes);
-// echo('</pre>');
+echo('<pre>');
+v($likes);
+echo('</pre>');
 ?>
 <!DOCTYPE html>
 <head>
@@ -54,10 +57,10 @@ tr {
 <main>
   <h1>いいねした画像一覧</h1>
   <p>以下の入力欄に取得したいユーザーのTwitter IDと、いつまでの投稿を取得したいかを、数値で入力してください。</p>
-  <small>数値のTwitter IDは、<a href="https://idtwi.com/">idtwi</a>などから検索できます。</small>
+  <small>数値のTwitter IDは、<a href="https://idtwi.com/" target="_blank" rel="noopener noreferrer">idtwi</a>などから検索できます。</small>
   <form action="<?= $_SERVER['PHP_SELF'] ?>" method="GET">
-    <input type="datetime-local" name="time">
-    <input type="number" name="id" value="<?= $_GET['id'] ?>">
+    <input type="datetime-local" name="time" value="<?= isset($_GET['time']) ? $_GET['time'] : '' ?>">
+    <input type="number" name="id" value="<?= isset($_GET['id']) ? $_GET['id'] : '' ?>">
     <input type="submit">
   </form>
   <?php if (isset($likes)) { ?>

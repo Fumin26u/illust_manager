@@ -2,7 +2,7 @@
 use Abraham\TwitterOAuth\TwitterOAuth;
 
 // APIキー、トークンの設定
-function getTweets($id) {
+function getTweets($id, $time) {
   // APIキーとトークン
   $API_KEY = 'b7fAIh1aBSkWVN26iVe1o3Sbu';
   $API_KEY_SECRET = '3pWPuIhOV57PL0LPL3F3TO5yiiw6mMwrRUzcYVbd4XSSYsZsWQ';
@@ -10,6 +10,7 @@ function getTweets($id) {
 
   // 「いいね」ツイート一覧のエンドポイント(URL)
   $endPoint = 'favorites/list';
+  
   // APIキーとトークンを用いてTwitterOAuthに接続
   $connection = new TwitterOAuth($API_KEY, $API_KEY_SECRET, $ACCESS_TOKEN);
 
@@ -19,26 +20,39 @@ function getTweets($id) {
 
   // 「いいね」したツイート一覧を取得
   $likes_tweet_list = $connection->get($point, ['user_id' => $account, 'count' => 100]);
-  // echo '<pre>';
-  // var_dump($likes_tweet_list);
-  // echo '</pre>';
+
+  // GETで取得した日付のフォーマット
+  $getTime = date('Y-m-d H:i:s', strtotime((string) $time));
 
   $likes = [];
   $queue = [];
   // キューにツイートを1つずつ挿入
   foreach ($likes_tweet_list as $l) {
+
+    // そのツイートの投稿日時を取得
+    $posted_date = date('Y-m-d H:i:s', strtotime((string) $l->created_at));
+
+    // 投稿日時がGETで取得した日付より古い場合、キューへの挿入を終了
+    if ($posted_date < $getTime) {
+      break;
+    }
+
     // 画像付きツイートでない場合、キューに挿入しない
     if (!isset($l->extended_entities)) continue;
-    $queue['post_time'] = $l->created_at;
+    $queue['post_time'] = $posted_date;
     $queue['user'] = $l->user->name;
     $queue['text'] = $l->text;
     $queue['images'] = [];
+
     // 画像は複数枚の可能性があるので配列に挿入
     foreach ($l->extended_entities->media as $m) {
       $queue['images'][] = $m->media_url_https;
     }
+
     // キューのデータを一覧に追加
     array_push($likes, $queue);
+
   }
+
   return $likes;
 }
