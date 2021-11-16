@@ -7,6 +7,11 @@ function v($arg) {
   return var_dump($arg);
 }
 
+// 文字列のエスケープ
+function h($str) {
+  return htmlspecialchars($str);
+}
+
 // URL引数idが空だった場合、初期表示にする
 if (isset($_GET['id']) && $_GET['id'] == '') {
   header('../', true, 303);
@@ -17,8 +22,6 @@ if (isset($_GET['id'])) {
   // 日付を英語の日付にフォーマット
   $likes = getTweets($_GET['id'], $_GET['time']);
 }
-
-// var_dump($_GET);
 
 // ページタイトルの設定
 $title = isset($_GET['id']) ? 'ID: ' . $_GET['id'] . 'のいいねツイート一覧' : 'いいねツイート取得システム';
@@ -59,8 +62,8 @@ tr {
   <p>以下の入力欄に取得したいユーザーのTwitter IDと、いつまでの投稿を取得したいかを、数値で入力してください。</p>
   <small>数値のTwitter IDは、<a href="https://idtwi.com/" target="_blank" rel="noopener noreferrer">idtwi</a>などから検索できます。</small>
   <form action="<?= $_SERVER['PHP_SELF'] ?>" method="GET">
-    <input type="datetime-local" name="time" value="<?= isset($_GET['time']) ? $_GET['time'] : '' ?>">
-    <input type="number" name="id" value="<?= isset($_GET['id']) ? $_GET['id'] : '' ?>">
+    <input type="datetime-local" name="time" value="<?= isset($_GET['time']) ? h($_GET['time']) : '' ?>">
+    <input type="number" name="id" value="<?= isset($_GET['id']) ? h($_GET['id']) : '' ?>">
     <input type="submit">
   </form>
   <?php if (isset($likes)) { ?>
