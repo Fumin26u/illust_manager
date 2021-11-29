@@ -19,7 +19,6 @@ if (isset($_GET['id']) && $_GET['id'] == '') {
 }
 
 if (isset($_GET['id'])) {
-  // 日付を英語の日付にフォーマット
   $likes = getTweets($_GET['id'], $_GET['time']);
 }
 
@@ -37,6 +36,10 @@ $title = isset($_GET['id']) ? 'ID: ' . $_GET['id'] . 'のいいねツイート�
 main {
   margin: 0 auto;
   max-width: 1280px;
+}
+
+table {
+  text-align: center;
 }
 
 input {
