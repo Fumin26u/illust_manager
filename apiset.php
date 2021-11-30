@@ -1,6 +1,8 @@
 <?php
 use Abraham\TwitterOAuth\TwitterOAuth;
 
+require_once('dlImages.php');
+
 // APIキー、トークンの設定
 function getTweets($id, $time) {
 
@@ -27,6 +29,8 @@ function getTweets($id, $time) {
 
   $likes = [];
   $queue = [];
+  // 全ての画像URLの一覧(ダウンロード時に利用)
+  $images = [];
   // キューにツイートを1つずつ挿入
   foreach ($likes_tweet_list as $l) {
 
@@ -46,12 +50,17 @@ function getTweets($id, $time) {
     // 画像は複数枚の可能性があるので配列に挿入
     foreach ($l->extended_entities->media as $m) {
       $queue['images'][] = $m->media_url_https;
+      // 画像URL一覧の配列にも同様に挿入
+      $images[] = $m->media_url_https;
     }
 
     // キューのデータを一覧に追加
     array_push($likes, $queue);
 
   }
+
+  // URL引数$_POSTが設定された場合、ローカルに画像一覧をダウンロード
+  if (isset($_POST['download'])) dlImages($images);
 
   return $likes;
 }

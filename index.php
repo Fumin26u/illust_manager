@@ -70,6 +70,9 @@ tr {
     <input type="submit">
   </form>
   <?php if (isset($likes)) { ?>
+  <form action="./index.php?time=<?= h($_GET['time']) ?>&id=<?= h($_GET['id']) ?>" method="POST">
+    <input type="submit" name="download" value="保存">
+  </form>
   <table>
     <tbody>
       <tr>
