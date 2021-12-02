@@ -8,18 +8,22 @@ function dlImages(array $images) {
 	$dl_file_name = 'images.zip';
 
 	// 保存先ディレクトリ
-	$dl_path = 'C:/Users/tanni/Downloads/';
+	// $dl_path = '/tmp/images/';
+	$dl_path = 'C:\Users\Mi4hashiKori\Downloads';
+
+    // 上記2つの文字列を結合
+    $filePath = $dl_path . '\\' . $dl_file_name;
 
 	// Zipを開く
-	$st = $zip->open($dl_path . $dl_file_name, ZipArchive::CREATE | ZipArchive::OVERWRITE);
+	$st = $zip->open($filePath, ZipArchive::CREATE | ZipArchive::OVERWRITE);
 	// 開けなかった場合の処理
 	if (!$st);
 
 	// Zipに画像ファイルを挿入
 	foreach ($images as $i) {
 
-			$filepath = $i;
-			$ch = curl_init($filepath);
+			$fp = $i;
+			$ch = curl_init($fp);
 			curl_setopt($ch, CURLOPT_HEADER, 0);
 			curl_setopt($ch, CURLOPT_NOBODY, 0);
 
@@ -34,7 +38,7 @@ function dlImages(array $images) {
 		
 			if ($status == 200 && mb_strlen($output) != 0){
 				// ファイルの取得に成功した場合、Zipにファイルを挿入
-				$zip->addFromString(basename($filepath), $output);
+				$zip->addFromString(basename($fp), $output);
 			} 
 
 			curl_close($ch);
@@ -46,8 +50,9 @@ function dlImages(array $images) {
 
 	// 作成したZipファイルのダウンロード
 	header("Content-Type: application/zip");
-	header("Content-Disposition: attachment; filename=\"".basename($dl_path . $dl_file_name)."\"");
+    header("Content-Transfer-Encoding: Binary");
+	header("Content-Disposition: attachment; filename=\"".basename($filePath)."\"");
 	ob_end_clean();
-	readfile($dl_path. $dl_file_name);
-	unlink($dl_path. $dl_file_name);
+	readfile($filePath);
+	unlink($filePath);
 }
