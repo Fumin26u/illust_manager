@@ -8,14 +8,10 @@ function dlImages(array $images) {
 	$dl_file_name = 'images.zip';
 
 	// 保存先ディレクトリ
-	// $dl_path = '/tmp/images/';
-	$dl_path = 'C:\Users\Mi4hashiKori\Downloads';
-
-    // 上記2つの文字列を結合
-    $filePath = $dl_path . '\\' . $dl_file_name;
+	// $dl_path = $path;
 
 	// Zipを開く
-	$st = $zip->open($filePath, ZipArchive::CREATE | ZipArchive::OVERWRITE);
+	$st = $zip->open($dl_file_name, ZipArchive::CREATE | ZipArchive::OVERWRITE);
 	// 開けなかった場合の処理
 	if (!$st);
 
@@ -50,9 +46,8 @@ function dlImages(array $images) {
 
 	// 作成したZipファイルのダウンロード
 	header("Content-Type: application/zip");
-    header("Content-Transfer-Encoding: Binary");
-	header("Content-Disposition: attachment; filename=\"".basename($filePath)."\"");
+	header("Content-Disposition: attachment; filename=\"".basename($dl_file_name)."\"");
 	ob_end_clean();
-	readfile($filePath);
-	unlink($filePath);
+	readfile($dl_file_name);
+	unlink($dl_file_name);
 }

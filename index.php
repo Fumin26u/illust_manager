@@ -46,6 +46,10 @@ input {
   padding: 8px 12px;
 }
 
+input[type="submit"] {
+  cursor: pointer;
+}
+ 
 img {
   max-width: 240px;
   display: inline-block;
@@ -70,9 +74,12 @@ tr {
     <input type="submit">
   </form>
   <?php if (isset($likes)) { ?>
-  <form action="./index.php?time=<?= h($_GET['time']) ?>&id=<?= h($_GET['id']) ?>" method="POST">
-    <input type="submit" name="download" value="保存">
-  </form>
+  <div class="download_area">
+    <p>[保存]ボタンを押すと、ダウンロードフォルダにZipファイルで保存されます。</p>
+    <form action="./index.php?time=<?= h($_GET['time']) ?>&id=<?= h($_GET['id']) ?>" method="POST">
+      <input type="submit" name="download" value="保存">
+    </form>
+  </div>
   <table>
     <tbody>
       <tr>
