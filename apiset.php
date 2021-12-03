@@ -60,12 +60,7 @@ function getTweets($id, $time) {
   }
 
   // URL引数$_POSTが設定された場合、ローカルに画像一覧をダウンロード
-  if (isset($_POST['download'])) {
-    // 
-
-    // dlImages($images, h($_POST['dl_path']));
-    dlImages($images);
-  }
+  if (isset($_POST['download'])) dlImages($images);
 
   return $likes;
 }

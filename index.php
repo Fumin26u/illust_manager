@@ -42,6 +42,10 @@ table {
   text-align: center;
 }
 
+.download_area {
+  margin: 2em auto;
+}
+
 input {
   padding: 8px 12px;
 }
