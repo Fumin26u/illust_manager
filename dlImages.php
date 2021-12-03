@@ -18,27 +18,27 @@ function dlImages(array $images) {
 	// Zipに画像ファイルを挿入
 	foreach ($images as $i) {
 
-			$fp = $i;
-			$ch = curl_init($fp);
-			curl_setopt($ch, CURLOPT_HEADER, 0);
-			curl_setopt($ch, CURLOPT_NOBODY, 0);
+		$fp = $i;
+		$ch = curl_init($fp);
+		curl_setopt($ch, CURLOPT_HEADER, 0);
+		curl_setopt($ch, CURLOPT_NOBODY, 0);
 
-			// タイムアウトの値
-			curl_setopt($ch, CURLOPT_TIMEOUT, 120);
+		// タイムアウトの値
+		curl_setopt($ch, CURLOPT_TIMEOUT, 120);
 
-			curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-			curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 1);
-		
-			$output = curl_exec($ch);
-			$status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-		
-			if ($status == 200 && mb_strlen($output) != 0){
-				// ファイルの取得に成功した場合、Zipにファイルを挿入
-				$zip->addFromString(basename($fp), $output);
-			} 
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, 1);
+	
+		$output = curl_exec($ch);
+		$status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+	
+		if ($status == 200 && mb_strlen($output) != 0){
+			// ファイルの取得に成功した場合、Zipにファイルを挿入
+			$zip->addFromString(basename($fp), $output);
+		} 
 
-			curl_close($ch);
-			sleep(1);
+		curl_close($ch);
+		sleep(1);
 
 	}
 

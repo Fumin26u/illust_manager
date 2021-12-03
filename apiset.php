@@ -24,6 +24,10 @@ function getTweets($id, $time) {
   // 「いいね」したツイート一覧を取得
   $likes_tweet_list = $connection->get($point, ['user_id' => $account, 'count' => 100]);
 
+  echo '<pre>';
+  var_dump($likes_tweet_list);
+  echo '</pre>';
+
   // GETで取得した日付のフォーマット
   $getTime = date('Y-m-d H:i:s', strtotime((string) $time));
 

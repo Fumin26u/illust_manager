@@ -108,4 +108,5 @@ tr {
   </table>
   <?php } ?>
 </main>
+<script src="script.js"></script>
 </body>
