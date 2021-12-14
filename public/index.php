@@ -1,6 +1,8 @@
 <?php
-require ('vendor/autoload.php');
-require ('apiset.php');
+$home = '../';
+
+require ($home . 'vendor/autoload.php');
+require ($home . 'apiset.php');
 
 // ダンプの簡略化
 function v($arg) {
