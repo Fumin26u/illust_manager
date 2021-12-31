@@ -4,7 +4,7 @@ use Abraham\TwitterOAuth\TwitterOAuth;
 require_once('dlImages.php');
 
 // APIキー、トークンの設定
-function getTweets($id, $time) {
+function getTweets($id, $st_time, $ed_time) {
 
     // APIキーとトークン
     include_once('apikey.php');
@@ -27,7 +27,8 @@ function getTweets($id, $time) {
     //   echo '</pre>';
 
     // GETで取得した日付のフォーマット
-    $getTime = date('Y-m-d H:i:s', strtotime((string) $time));
+    $st_getTime = date('Y-m-d H:i:s', strtotime((string) $st_time));
+    $ed_getTime = date('Y-m-d H:i:s', strtotime((string) $ed_time));
 
     $likes = [];
     $queue = [];
@@ -40,7 +41,9 @@ function getTweets($id, $time) {
         $posted_date = date('Y-m-d H:i:s', strtotime((string) $l->created_at));
 
         // 投稿日時がGETで取得した日付より古い場合、キューへの挿入を終了
-        if ($posted_date < $getTime) break;
+        if ($posted_date < $st_getTime) break;
+        // 投稿日時がGETで取得した日付より新しい場合、キューに挿入しない
+        if ($posted_date > $ed_getTime) continue;
 
         // 画像付きツイートでない場合、キューに挿入しない
         if (!isset($l->extended_entities)) continue;
