@@ -38,7 +38,7 @@ function dlImages(array $images) {
 		} 
 
 		curl_close($ch);
-		sleep(1);
+		usleep(10000);
 
 	}
 
