@@ -68,7 +68,7 @@ $nowTime = $today . 'T' . $now;
     <p><?= count($likes) ?>個のツイートが取得されました。</p>
     <div class="download_area">
         <p>[保存]ボタンを押すと、ダウンロードフォルダにZipファイルで保存されます。</p>
-        <form action="./index.php?time=<?= h($_GET['time']) ?>&id=<?= h($_GET['id']) ?>" method="POST">
+        <form action="./index.php?st_time=<?= h($_GET['st_time']) ?>&ed_time=<?= h($_GET['ed_time']) ?>&id=<?= h($_GET['id']) ?>" method="POST">
         <input type="submit" name="download" value="保存">
         </form>
     </div>
