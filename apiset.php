@@ -2,6 +2,7 @@
 require_once("vendor/autoload.php");
 use Abraham\TwitterOAuth\TwitterOAuth;
 
+try {
 require_once('dlImages.php');
 
 // APIキー、トークンの設定
@@ -78,4 +79,8 @@ function getTweets($id, $st_time, $ed_time) {
     if (isset($_POST['download'])) dlImages($images);
 
     return $likes;
+}
+} catch (PDOException $e) {
+    echo "予期せぬエラーが発生しました。";
+    echo $e;
 }
