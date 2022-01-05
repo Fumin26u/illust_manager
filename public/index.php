@@ -20,9 +20,15 @@ $title = isset($_GET['id']) ? '@' . $_GET['id'] . 'のいいねツイート一�
 // 現在時刻を生成
 $t = new DateTime();
 $today = $t->format('Y-m-d');
+
 $n = new DateTime();
 $now = $n->format('H:i');
 $nowTime = $today . 'T' . $now;
+
+// 遡れる最低年月日
+$m = new DateTime();
+$minDay = $m->modify("-1 months")->format('Y-m-d'); 
+$minTime = $minDay . 'T' . $now;
 
 // echo('<pre>');
 // v($likes);
@@ -37,8 +43,12 @@ $nowTime = $today . 'T' . $now;
 <body>
 <main>
     <h1>いいねした画像一覧</h1>
-    <p>以下の入力欄に取得したいユーザーのTwitter ID(@以降の文字)と、いつまでの投稿を取得したいかを入力してください。(全て必須入力)</p>
-    <small>画像の数が多いほど、ダウンロードに時間がかかります(画像数x1秒が目安)。また、画像数が多すぎると、ダウンロードできない場合があります。</small>
+    <p>以下の入力欄に取得したいユーザーのTwitter ID(@以降の文字)と、いつまでの投稿を取得したいかを期間指定してください。(全て必須入力)</p>
+    <div class="caution">
+        <h3>注意事項</h3>
+        <p>画像の数が多いほど、ダウンロードに時間がかかります(画像数x1秒が目安)。また、画像数が多すぎると、ダウンロードできない場合があります。</p>
+        <p>期間指定で遡れる範囲は最大1カ月前までです。</p>
+    </div>
     <?php // <small>数値のTwitter IDは、<a href="https://idtwi.com/" target="_blank" rel="noopener noreferrer">idtwi</a>などから検索できます。</small> ?>
     <form action="<?= $_SERVER['PHP_SELF'] ?>" method="GET">
         <dl class="form_list">
@@ -49,7 +59,7 @@ $nowTime = $today . 'T' . $now;
             <div>
                 <dt>期間指定</dt>
                 <dd>
-                    <input type="datetime-local" name="st_time" value="<?= isset($_GET['st_time']) ? h($_GET['st_time']) : '' ?>" required>から<br><input type="datetime-local" name="ed_time" value="<?= isset($_GET['ed_time']) ? h($_GET['ed_time']) : $nowTime ?>" required>まで
+                    <input type="datetime-local" name="st_time" value="<?= isset($_GET['st_time']) ? h($_GET['st_time']) : '' ?>" min="<?= $minTime ?>" required>から<br><input type="datetime-local" name="ed_time" value="<?= isset($_GET['ed_time']) ? h($_GET['ed_time']) : $nowTime ?>" required>まで
                 </dd>
             </div>
         </dl>      

@@ -8,7 +8,7 @@ require_once('dlImages.php');
 function getTweets($id, $st_time, $ed_time) {
 
     // ツイートの最大取得件数(MAX200)
-    $count = 200;
+    $count = 150;
 
     // APIキーとトークン
     include_once('apikey.php');
