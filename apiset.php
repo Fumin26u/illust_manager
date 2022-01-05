@@ -1,7 +1,10 @@
 <?php
+require_once("vendor/autoload.php");
 use Abraham\TwitterOAuth\TwitterOAuth;
 
 require_once('dlImages.php');
+
+v($_GET);
 
 // APIキー、トークンの設定
 function getTweets($id, $st_time, $ed_time) {
@@ -11,20 +14,24 @@ function getTweets($id, $st_time, $ed_time) {
 
     // 「いいね」ツイート一覧のエンドポイント(URL)
     $endPoint = 'favorites/list';
+    // $endPoint = 'https://api.twitter.com/2/users/' . $id . '/liked_tweets';
 
     // APIキーとトークンを用いてTwitterOAuthに接続
-    $connection = new TwitterOAuth($API_KEY, $API_KEY_SECRET, $ACCESS_TOKEN);
+    $connection = new TwitterOAuth($API_KEY, $API_KEY_SECRET, $ACCESS_TOKEN, $ACCESS_TOKEN_SECRET);
+
+    // APIのバージョンを2にする
+    // $connection->setApiVersion('2');
 
     // Twitter ID(数値)を取得し、いいねのエンドポイント(URL)を代入
     $account = $id;
     $point = $endPoint;
 
     // 「いいね」したツイート一覧を取得
-    $likes_tweet_list = $connection->get($point, ['user_id' => $account, 'count' => 500]);
+    $likes_tweet_list = $connection->get($point, ['screen_name' => $account, 'count' => 2]);
 
-    //   echo '<pre>';
-    //   var_dump($likes_tweet_list);
-    //   echo '</pre>';
+    echo '<pre>';
+    var_dump($likes_tweet_list);
+    echo '</pre>';
 
     // GETで取得した日付のフォーマット
     $st_getTime = date('Y-m-d H:i:s', strtotime((string) $st_time));
@@ -51,6 +58,7 @@ function getTweets($id, $st_time, $ed_time) {
         $queue['user'] = $l->user->name;
         $queue['text'] = $l->text;
         $queue['images'] = [];
+        $queue['url'] = $l->extended_entities->media[0]->url;
 
         // 画像は複数枚の可能性があるので配列に挿入
         foreach ($l->extended_entities->media as $m) {

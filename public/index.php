@@ -38,8 +38,8 @@ $nowTime = $today . 'T' . $now;
 <body>
 <main>
     <h1>いいねした画像一覧</h1>
-    <p>以下の入力欄に取得したいユーザーのTwitter IDと、いつまでの投稿を取得したいかを入力してください。(全て必須入力)</p>
-    <small>数値のTwitter IDは、<a href="https://idtwi.com/" target="_blank" rel="noopener noreferrer">idtwi</a>などから検索できます。</small>
+    <p>以下の入力欄に取得したいユーザーのTwitter ID(@以降の文字)と、いつまでの投稿を取得したいかを入力してください。(全て必須入力)</p>
+    <!-- <small>数値のTwitter IDは、<a href="https://idtwi.com/" target="_blank" rel="noopener noreferrer">idtwi</a>などから検索できます。</small> -->
     <form action="<?= $_SERVER['PHP_SELF'] ?>" method="GET">
         <dl class="form_list">
             <div>
@@ -50,7 +50,7 @@ $nowTime = $today . 'T' . $now;
             </div>
             <div>
                 <dt>Twitter ID (数値)</dt>
-                <dd><input type="number" name="id" value="<?= isset($_GET['id']) ? h($_GET['id']) : '' ?>" required></dd>
+                <dd><input type="text" name="id" value="<?= isset($_GET['id']) ? h($_GET['id']) : '' ?>" required></dd>
             </div>
         </dl>      
         <input type="submit" value="送信">
@@ -80,6 +80,10 @@ $nowTime = $today . 'T' . $now;
                 <?php foreach($l['images'] as $i) { ?>
                 <img src="<?= $i ?>" alt="">
                 <?php } ?>
+                <p>
+                    ツイート元のリンク:
+                    <a href="<?= $l['url'] ?>" target="_blank" rel="noopener noreferrer"><?= $l['url'] ?></a>
+                </p>
             </td>
             </tr>
         <?php } ?>
