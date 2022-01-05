@@ -2,7 +2,6 @@
 $home = '../';
 
 require($home. 'commonlib.php');
-require($home . 'vendor/autoload.php');
 require($home . 'apiset.php');
 
 // URL引数idが空だった場合、初期表示にする
@@ -16,7 +15,7 @@ if (isset($_GET['id'])) {
 }
 
 // ページタイトルの設定
-$title = isset($_GET['id']) ? 'ID: ' . $_GET['id'] . 'のいいねツイート一覧' : 'いいねツイート取得システム';
+$title = isset($_GET['id']) ? '@' . $_GET['id'] . 'のいいねツイート一覧' : 'いいねツイート取得システム';
 
 // 現在時刻を生成
 $t = new DateTime();
@@ -39,18 +38,19 @@ $nowTime = $today . 'T' . $now;
 <main>
     <h1>いいねした画像一覧</h1>
     <p>以下の入力欄に取得したいユーザーのTwitter ID(@以降の文字)と、いつまでの投稿を取得したいかを入力してください。(全て必須入力)</p>
-    <!-- <small>数値のTwitter IDは、<a href="https://idtwi.com/" target="_blank" rel="noopener noreferrer">idtwi</a>などから検索できます。</small> -->
+    <small>画像の数が多いほど、ダウンロードに時間がかかります(画像数x1秒が目安)。また、画像数が多すぎると、ダウンロードできない場合があります。</small>
+    <?php // <small>数値のTwitter IDは、<a href="https://idtwi.com/" target="_blank" rel="noopener noreferrer">idtwi</a>などから検索できます。</small> ?>
     <form action="<?= $_SERVER['PHP_SELF'] ?>" method="GET">
         <dl class="form_list">
+            <div>
+                <dt>Twitter ID</dt>
+                <dd><input type="text" name="id" value="<?= isset($_GET['id']) ? h($_GET['id']) : '' ?>" required></dd>
+            </div>
             <div>
                 <dt>期間指定</dt>
                 <dd>
                     <input type="datetime-local" name="st_time" value="<?= isset($_GET['st_time']) ? h($_GET['st_time']) : '' ?>" required>から<br><input type="datetime-local" name="ed_time" value="<?= isset($_GET['ed_time']) ? h($_GET['ed_time']) : $nowTime ?>" required>まで
                 </dd>
-            </div>
-            <div>
-                <dt>Twitter ID (数値)</dt>
-                <dd><input type="text" name="id" value="<?= isset($_GET['id']) ? h($_GET['id']) : '' ?>" required></dd>
             </div>
         </dl>      
         <input type="submit" value="送信">
@@ -81,7 +81,7 @@ $nowTime = $today . 'T' . $now;
                 <img src="<?= $i ?>" alt="">
                 <?php } ?>
                 <p>
-                    ツイート元のリンク:
+                    ツイート元リンク:
                     <a href="<?= $l['url'] ?>" target="_blank" rel="noopener noreferrer"><?= $l['url'] ?></a>
                 </p>
             </td>
