@@ -1,18 +1,9 @@
 <?php
 $home = '../';
 
-require ($home . 'vendor/autoload.php');
-require ($home . 'apiset.php');
-
-// ダンプの簡略化
-function v($arg) {
-    return var_dump($arg);
-}
-
-// 文字列のエスケープ
-function h($str) {
-    return htmlspecialchars($str);
-}
+require($home. 'commonlib.php');
+require($home . 'vendor/autoload.php');
+require($home . 'apiset.php');
 
 // URL引数idが空だった場合、初期表示にする
 if (isset($_GET['id']) && $_GET['id'] == '') {
