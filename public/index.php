@@ -35,6 +35,7 @@ $minTime = $minDay . 'T' . $now;
 // echo('</pre>');
 ?>
 <!DOCTYPE html>
+<html lang="ja">
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title><?= $title ?></title>
@@ -106,3 +107,4 @@ $minTime = $minDay . 'T' . $now;
 <?php include($home . '../footer.php') ?>
 <script src="<?= $home ?>../script.js"></script>
 </body>
+</html>

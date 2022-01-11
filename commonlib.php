@@ -1,6 +1,14 @@
 <?php
+require_once('system-conf.php');
+
 // タイムゾーン設定
 date_default_timezone_set('Asia/Tokyo');
+
+// DB接続
+function dbConnect() {
+    $pdo = new PDO(DSN, DBUSER, DBPASS);
+    return $pdo;
+}
 
 // タイムアウト制限を無効化
 ini_set("max_execution_time", 300);
