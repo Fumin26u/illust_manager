@@ -1,12 +1,12 @@
 <?php
-$home = '../';
+$home = './';
 
-require($home. 'commonlib.php');
-require($home . 'apiset.php');
+require($home. '../commonlib.php');
+require($home . '../apiset.php');
 
 // URL引数idが空だった場合、初期表示にする
 if (isset($_GET['id']) && $_GET['id'] == '') {
-    header('../', true, 303);
+    header('./', true, 303);
     exit;
 }
 
@@ -41,8 +41,8 @@ $minTime = $minDay . 'T' . $now;
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
+<?php include_once($home . '../header.php') ?>
 <main>
-    <h1>いいねした画像一覧</h1>
     <p>以下の入力欄に取得したいユーザーのTwitter ID(@以降の文字)と、いつまでの投稿を取得したいかを期間指定してください。(全て必須入力)</p>
     <div class="caution">
         <h3>注意事項</h3>
@@ -101,5 +101,6 @@ $minTime = $minDay . 'T' . $now;
     </table>
     <?php } ?>
 </main>
-<script src="<?= $home ?>script.js"></script>
+<?php include($home . '../footer.php') ?>
+<script src="<?= $home ?>../script.js"></script>
 </body>
