@@ -15,7 +15,7 @@ if (isset($_GET['id'])) {
 }
 
 // ページタイトルの設定
-$title = isset($_GET['id']) ? '@' . $_GET['id'] . 'のいいねツイート一覧' : 'いいねツイート取得システム';
+$title = isset($_GET['id']) ? '@' . $_GET['id'] . 'のいいねツイート一覧 | TwimageDLer' : "TwimageDLer | \"いいね\"した画像の自動ダウンローダー";
 
 // 現在時刻を生成
 $t = new DateTime();
@@ -38,11 +38,12 @@ $minTime = $minDay . 'T' . $now;
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title><?= $title ?></title>
-<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="top.css">
 </head>
 <body>
 <?php include_once($home . '../header.php') ?>
 <main>
+    <h2>検索フォーム</h2>
     <p>以下の入力欄に取得したいユーザーのTwitter ID(@以降の文字)と、いつまでの投稿を取得したいかを期間指定してください。(全て必須入力)</p>
     <div class="caution">
         <h3>注意事項</h3>
@@ -66,6 +67,7 @@ $minTime = $minDay . 'T' . $now;
         <input type="submit" value="送信">
     </form>
     <?php if (isset($likes)) { ?>
+    <h2>いいねした画像一覧</h2>
     <p><?= count($likes) ?>個のツイートが取得されました。</p>
     <div class="download_area">
         <p>[保存]ボタンを押すと、ダウンロードフォルダにZipファイルで保存されます。</p>

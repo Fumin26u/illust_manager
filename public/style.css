@@ -60,6 +60,57 @@ input[type="submit"] {
 
 --------------------*/
 
+header {
+    display: flex;
+    justify-content: space-between;
+    max-width: 1296px;
+    box-sizing: border-box;
+    margin: 0 auto;
+    padding: 4px 8px;
+}
+
+header .logo_area a {
+    color: black;
+    text-decoration: none;
+}
+header .logo_area .title {
+    font-size: 24px;
+    font-weight: bold;
+}
+header .logo_area h1 {
+    font-size: 14px;
+    font-weight: normal;
+    margin: 0 auto;
+}
+
+header .signup_area a {
+    width: 80px;
+    padding: 8px;
+    margin: 8px;
+    font-weight: bold;
+    display: inline-block;
+    vertical-align: middle;
+    text-align: center;
+    text-decoration: none;
+    color: royalblue;
+    border: 1px solid royalblue;
+    border-radius: 8px;
+    transition: all .2s;
+}
+header .signup_area a:hover {
+    color: white;
+    background-color: royalblue;
+}
+
+header .signup_area #login {
+    color: steelblue;
+    border: 1px solid steelblue;
+}
+header .signup_area #login:hover {
+    color: white;
+    background-color: steelblue;
+}
+
 /*--------------------
 
     フッター
