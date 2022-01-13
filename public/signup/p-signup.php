@@ -9,6 +9,11 @@ session_start();
 $_SESSION['token'] = bin2hex(random_bytes(32));
 $token = $_SESSION['token'];
 
+$url = 'http://localhost/LikedImageDLer/public/signup/signup.php?t=';
+
+// dbに登録されたかどうか(メール送信判定)
+$is_submitted_db = false;
+
 try {
     $pdo = dbConnect();
 
@@ -37,16 +42,15 @@ try {
         $msg += $err;
         if (count($err) == 0) {
             $token = hash('sha256', uniqid(rand(), TRUE));
-            v($token);
-            $url = 'http://localhost/LikedImageDLer/public/signup/signup.php?t=' . $token;
+            $signup_url = $url . $token;
     
             $sql = "INSERT INTO user_pre (token, email, req_time, is_submitted) VALUES (:token, :email, NOW(), 0)";
             $st = $pdo->prepare($sql);
             $st->bindValue(':token', $token, PDO::PARAM_STR);
             $st->bindValue(':email', $email, PDO::PARAM_STR);
-            v($st->execute());
+            $st->execute();
     
-            $msg[] = '確認メールを送信しました。';   
+            $is_submitted_db = true;
         }
     }
 
@@ -55,6 +59,39 @@ try {
     if (DEBUG) {
         echo $e;
     }
+}
+
+// 仮登録が行われた場合、メール送信
+if ($is_submitted_db) {
+    $mail_content = <<<EOM
+
+＝＝＝＝＝＝＝＝＝＝仮登録通知＝＝＝＝＝＝＝＝＝＝
+
+TwimageDLerのご利用ありがとうございます。
+1時間以内に、以下のリンクから本登録をお願いします。
+
+$signup_url
+
+本メールは送信専用です。返信は受付できませんのでご了承ください。
+
+EOM;
+
+// メール送信の実行
+$to = $email;
+$from = 'no-reply@twimagedler.com';
+
+// メールヘッダ
+$header = 'From: ' . mb_encode_mimeheader('TwimageDLer', 'UTF-8') . '<' . $from . '>';
+
+// タイトル
+$title = '【仮登録通知】| TwimageDLer';
+
+// 本文
+$message = '';
+$message .= brReplace(periodReplace($mail_content));
+
+// 送信＋判定
+$is_sent_mail = mb_send_mail($to, $title, $message, $header);
 }
 
 $title = 'ユーザー登録 | TwimageDLer';
