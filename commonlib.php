@@ -10,6 +10,9 @@ function dbConnect() {
     return $pdo;
 }
 
+// ClickJacking対策
+header('X-FRAME-OPTIONS: SAMEORIGIN');
+
 // タイムアウト制限を無効化
 ini_set("max_execution_time", 300);
 

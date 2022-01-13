@@ -16,36 +16,6 @@
 
 /*--------------------
 
-	検索フォーム
-
---------------------*/
-.form_list {
-    margin: 1em auto;
-}
-
-@media (min-width: 750px) {
-    .form_list dt,
-    .form_list dd {
-        display: inline-block;
-        vertical-align: middle;
-    }
-    .form_list dt {
-        width: 12%;
-    }
-    .form_list dd {
-        width: 80%;
-    }
-
-    input[type="datetime-local"] {
-        display: inline-block;
-    }
-    .form_list br {
-        display: none;
-    }
-}
-
-/*--------------------
-
 	ダウンロードフォーム
 
 --------------------*/

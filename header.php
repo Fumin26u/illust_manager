@@ -7,6 +7,6 @@
 </div>
 <div class="signup_area">
 	<a href="<?= $home ?>signup/login.php" id="login">ログイン</a>
-	<a href="<?= $home ?>signup/signup.php" id="signup">登録</a>
+	<a href="<?= $home ?>signup/p-signup.php" id="signup">登録</a>
 </div>
 </header>
