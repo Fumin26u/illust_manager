@@ -46,8 +46,23 @@ try {
         if (count($err) == 0) {
             $token = hash('sha256', uniqid(rand(), TRUE));
             $signup_url = $url . $token;
-    
-            $sql = "INSERT INTO user_pre (token, email, req_time, is_submitted) VALUES (:token, :email, NOW(), 0)";
+
+            $is_preSubmitted = false;
+
+            $st = $pdo->prepare('SELECT user_id FROM user_pre WHERE email = :email');
+            $st->bindValue(':email', $email, PDO::PARAM_STR);
+            $st->execute();
+            
+            $res = $st->fetchAll(PDO::FETCH_ASSOC);
+            if (isset($res['id'])) $is_preSubmitted = true;
+
+            // 既に仮登録を行っているかつ、本登録が行われていないメアドで登録された場合、更新を行う
+            if ($is_preSubmitted) {
+                $sql = "UPDATE user_pre SET token = :token, req_time = NOW() WHERE email = :email";
+            } else {
+                $sql = "INSERT INTO user_pre (token, email, req_time, is_submitted) VALUES (:token, :email, NOW(), 0)";
+            }
+
             $st = $pdo->prepare($sql);
             $st->bindValue(':token', $token, PDO::PARAM_STR);
             $st->bindValue(':email', $email, PDO::PARAM_STR);
