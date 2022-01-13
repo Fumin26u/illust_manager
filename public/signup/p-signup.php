@@ -37,7 +37,6 @@ try {
             $st->execute();
     
             $res = $st->fetchAll(PDO::FETCH_ASSOC);
-            v($res);
             if (isset($res['id'])) $err[] = '既に使用されているメールアドレスです。';
         }
     
@@ -53,8 +52,8 @@ try {
             $st->bindValue(':email', $email, PDO::PARAM_STR);
             $st->execute();
             
-            $res = $st->fetchAll(PDO::FETCH_ASSOC);
-            if (isset($res['id'])) $is_preSubmitted = true;
+            $res = $st->fetch(PDO::FETCH_ASSOC);
+            if (isset($res['user_id'])) $is_preSubmitted = true;
 
             // 既に仮登録を行っているかつ、本登録が行われていないメアドで登録された場合、更新を行う
             if ($is_preSubmitted) {
