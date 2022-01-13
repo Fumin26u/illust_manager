@@ -9,6 +9,8 @@ session_start();
 $_SESSION['token'] = bin2hex(random_bytes(32));
 $token = $_SESSION['token'];
 
+// $url = 'https://fuminsv.sakura.ne.jp/idtest/public/signup/signup.php?t=';
+// $url = 'https://imagedler.com/signup/signup.php?t=';
 $url = 'http://localhost/LikedImageDLer/public/signup/signup.php?t=';
 
 // dbに登録されたかどうか(メール送信判定)
@@ -35,6 +37,7 @@ try {
             $st->execute();
     
             $res = $st->fetchAll(PDO::FETCH_ASSOC);
+            v($res);
             if (isset($res['id'])) $err[] = '既に使用されているメールアドレスです。';
         }
     
@@ -76,22 +79,28 @@ $signup_url
 
 EOM;
 
-// メール送信の実行
-$to = $email;
-$from = 'no-reply@twimagedler.com';
+    // メール送信の実行
+    $to = $email;
+    $from = 'no-reply@twimagedler.com';
 
-// メールヘッダ
-$header = 'From: ' . mb_encode_mimeheader('TwimageDLer', 'UTF-8') . '<' . $from . '>';
+    // メールヘッダ
+    $header = 'From: ' . mb_encode_mimeheader('TwimageDLer', 'UTF-8') . '<' . $from . '>';
 
-// タイトル
-$title = '【仮登録通知】| TwimageDLer';
+    // タイトル
+    $title = '【仮登録通知】| TwimageDLer';
 
-// 本文
-$message = '';
-$message .= brReplace(periodReplace($mail_content));
+    // 本文
+    $message = '';
+    $message .= brReplace(periodReplace($mail_content));
 
-// 送信＋判定
-$is_sent_mail = mb_send_mail($to, $title, $message, $header);
+    // 送信＋判定
+    $is_sent_mail = mb_send_mail($to, $title, $message, $header);
+
+    if ($is_sent_mail) {
+        $msg[] = '仮登録通知を送信しました。';
+    } else {
+        $msg[] = 'メール送信に失敗しました。お手数ですが、時間を置いて再度お試しいただけますようよろしくお願いします。';
+    }
 }
 
 $title = 'ユーザー登録 | TwimageDLer';
