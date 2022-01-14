@@ -7,11 +7,11 @@ $msg = [];
 session_start();
 // csrf対策
 $_SESSION['token'] = bin2hex(random_bytes(32));
-$token = $_SESSION['token'];
+$cToken = $_SESSION['token'];
 
-// $url = 'https://fuminsv.sakura.ne.jp/idtest/public/signup/signup.php?t=';
-// $url = 'https://imagedler.com/signup/signup.php?t=';
-$url = 'http://localhost/LikedImageDLer/public/signup/signup.php?t=';
+// $url = 'https://fuminsv.sakura.ne.jp/idtest/public/u/signup.php?t=';
+// $url = 'https://imagedler.com/u/signup.php?t=';
+$url = 'http://localhost/LikedImageDLer/public/u/signup.php?t=';
 
 // dbに登録されたかどうか(メール送信判定)
 $is_submitted_db = false;
@@ -146,6 +146,7 @@ $title = 'ユーザー登録 | TwimageDLer';
             <dd><input type="email" name="email" maxlength="80"></dd>
         </div>
     </dl>
+    <input type="hidden" name="token" value="<?= $cToken ?>">
     <input type="submit">
 </form>
 </main>

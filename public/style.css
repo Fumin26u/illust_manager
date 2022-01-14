@@ -54,6 +54,34 @@ input[type="submit"] {
     cursor: pointer;
 }
 
+.c-btn {
+    width: 80px;
+    padding: 8px;
+    margin: 8px;
+    font-weight: bold;
+    display: inline-block;
+    vertical-align: middle;
+    text-align: center;
+    text-decoration: none;
+    color: royalblue;
+    border: 1px solid royalblue;
+    border-radius: 8px;
+    transition: all .2s;
+}
+.c-btn:hover {
+    color: white;
+    background-color: royalblue;
+}
+
+.c-btn#login {
+    color: steelblue;
+    border: 1px solid steelblue;
+}
+.c-btn#login:hover {
+    color: white;
+    background-color: steelblue;
+}
+
 /*--------------------
 
     ヘッダー 
@@ -81,34 +109,6 @@ header .logo_area h1 {
     font-size: 14px;
     font-weight: normal;
     margin: 0 auto;
-}
-
-header .signup_area a {
-    width: 80px;
-    padding: 8px;
-    margin: 8px;
-    font-weight: bold;
-    display: inline-block;
-    vertical-align: middle;
-    text-align: center;
-    text-decoration: none;
-    color: royalblue;
-    border: 1px solid royalblue;
-    border-radius: 8px;
-    transition: all .2s;
-}
-header .signup_area a:hover {
-    color: white;
-    background-color: royalblue;
-}
-
-header .signup_area #login {
-    color: steelblue;
-    border: 1px solid steelblue;
-}
-header .signup_area #login:hover {
-    color: white;
-    background-color: steelblue;
 }
 
 /*--------------------
