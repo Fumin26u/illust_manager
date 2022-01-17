@@ -102,10 +102,6 @@ SQL;
     }
 }
 
-// 仮置き
-$is_proper_access = true;
-$email = h($res[0]['email']);
-
 $title = 'ユーザー登録 | TwimageDLer';
 ?>
 <!DOCTYPE html>
