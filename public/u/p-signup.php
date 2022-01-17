@@ -9,9 +9,9 @@ session_start();
 $_SESSION['token'] = bin2hex(random_bytes(32));
 $cToken = $_SESSION['token'];
 
-// $url = 'https://fuminsv.sakura.ne.jp/idtest/public/u/signup.php?t=';
+$url = 'https://fuminsv.sakura.ne.jp/idtest/public/u/signup.php?t=';
 // $url = 'https://imagedler.com/u/signup.php?t=';
-$url = 'http://localhost/LikedImageDLer/public/u/signup.php?t=';
+// $url = 'http://localhost/LikedImageDLer/public/u/signup.php?t=';
 
 // dbに登録されたかどうか(メール送信判定)
 $is_submitted_db = false;
