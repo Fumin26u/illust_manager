@@ -48,6 +48,8 @@ try {
 
             $is_preSubmitted = false;
 
+            $pdo->beginTransaction();
+
             $st = $pdo->prepare('SELECT user_id FROM user_pre WHERE email = :email');
             $st->bindValue(':email', $email, PDO::PARAM_STR);
             $st->execute();
@@ -67,6 +69,7 @@ try {
             $st->bindValue(':email', $email, PDO::PARAM_STR);
             $st->execute();
     
+            $pdo->commit();
             $is_submitted_db = true;
         }
     }

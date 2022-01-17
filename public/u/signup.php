@@ -14,11 +14,57 @@ $is_proper_access = true;
 
 try {
 
+    $pdo = dbConnect();
+
+    $err = [];
+    // データがPOSTされた際の処理
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+        // パスワードの同値チェック
+        if (h($_POST['password']) !== h($_POST['confirm'])) {
+            $err[] = '入力されたパスワードが一致しません。';
+        } else {
+        // IDが既に使用されているかチェック
+            $st = $pdo->query('SELECT user_name FROM user');
+            $rows = $st->fetchAll(PDO::FETCH_ASSOC);
+            if (array_search($_POST['user_name'], $rows) !== false) {
+                $err[] = '既に使用されているIDです。';
+            }
+        }
+
+        // 上記エラーが無い場合、入力データを登録
+        if (empty($err)) {
+
+            $pdo->beginTransaction();
+
+            $sql = <<<SQL
+INSERT INTO user (
+    user_name, password, email, premium, is_auth, created_at
+) VALUES (
+    :user_name, :password, :email, 'N', TRUE, NOW()
+)
+SQL;
+            $st = $pdo->prepare($sql);
+            $st->bindValue(':user_name', h($_POST['user_name']), PDO::PARAM_STR);    
+            $st->bindValue(':password', password_hash(h($_POST['password']), PASSWORD_DEFAULT), PDO::PARAM_STR);
+            $st->bindValue(':email', h($_POST['email']), PDO::PARAM_STR);
+            $st->execute();
+
+            // 仮ユーザテーブルの本登録かどうかをTRUEに変更
+            $st = $pdo->prepare('UPDATE user_pre SET is_submitted = TRUE WHERE email = :email');
+            $st->bindValue(':email', h($_POST['email']), PDO::PARAM_STR);
+            $st->execute();
+
+            $pdo->commit();
+            $msg[] = '登録しました。';
+        }
+ 
+    }
+
     // URL引数tが設定されていないまたは空の場合false
     if (!isset($_GET['t']) || $_GET['t'] == '') {
         $is_proper_access = false;
     } else {
-        $pdo = dbConnect();
 
         $token = h($_GET['t']);
 
@@ -46,6 +92,8 @@ try {
             }
         }
     }
+
+    $msg += $err;
 
 } catch (PDOException $e) {
     echo 'データベースの接続に失敗しました。';
@@ -80,8 +128,11 @@ $title = 'ユーザー登録 | TwimageDLer';
 <?php } else { ?>
 <div class="description"> 
     <p>以下の項目に内容を入力し、[登録]ボタンを押すとアカウントが登録されます。</p>
+    <?php foreach ($msg as $m) { ?>
+        <p><?= $m ?></p>
+    <?php } ?>
 </div>
-<form action="<?= $_SERVER['PHP_SELF'] ?>" action="POST">
+<form action="<?= $_SERVER['PHP_SELF'] . '?t=' . $token ?>" method="POST">
     <dl class="form_list">
         <div>
             <dt>メールアドレス</dt>
@@ -91,8 +142,8 @@ $title = 'ユーザー登録 | TwimageDLer';
             </dd>
         </div>
         <div>
-            <dt>ユーザーID</dt>
-            <dd><input type="text" name="id" pattern="^([a-zA-Z0-9-]{6,})$" autocomplete="username" required></dd>
+            <dt>ユーザー名</dt>
+            <dd><input type="text" name="user_name" pattern="^([a-zA-Z0-9-]{6,})$" autocomplete="username" value="<?= isset($_POST['user_name']) ? h($_POST['user_name']) : '' ?>" required></dd>
             <small style="display: block;">※半角英数字(小文字・大文字可)6文字以上で入力</small>
         </div>
         <div>
@@ -106,13 +157,22 @@ $title = 'ユーザー登録 | TwimageDLer';
                     minlength="6" 
                     required
                 >
-                <button type="button" id="display">表示</button>
+                <!-- <button type="button" id="display">表示</button> -->
             </dd>
         </div>
-        <!-- <div>
+        <div>
             <dt>パスワード(再入力)</dt>
-            <dd><input type="password" name="confirm" autocomplete="current-password" minlength="6" oninput="checkPass(this)" required><button type="button">表示</button></dd>
-        </div> -->
+            <dd>
+                <input 
+                    type="password" 
+                    name="confirm" 
+                    autocomplete="current-password" 
+                    minlength="6" 
+                    required
+                >
+                <!-- <button type="button">表示</button> -->
+            </dd>
+        </div>
     </dl>
     <input type="submit" value="登録">
 </form>
@@ -122,27 +182,6 @@ $title = 'ユーザー登録 | TwimageDLer';
 </body>
 <script>
 {
-    function checkPass(confirm) {
-		var pass1 = password.value;
-		var pass2 = confirm.value;
-
-		if (pass1 != pass2) {
-			confirm.setCustomValidity("入力値が一致しません。");
-		} else {
-			confirm.setCustomValidity('');
-		}
-	}
-
-    function displayPass() {
-        var p = document.getElementById('password');
-        p.type = 'text';
-    }
-
-    function unDisplay() {
-        var p = document.getElementById('password');
-        p.type = 'password';
-    }
-
     var d = document.getElementById('display');
     d.onmousedown = displayPass;
     d.onmouseup = unDisplay;
