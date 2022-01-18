@@ -55,7 +55,7 @@ input[type="submit"] {
 }
 
 .c-btn {
-    width: 80px;
+    min-width: 80px;
     padding: 8px;
     margin: 8px;
     font-weight: bold;
@@ -80,6 +80,18 @@ input[type="submit"] {
 .c-btn#login:hover {
     color: white;
     background-color: steelblue;
+}
+
+.c-btn#logout {
+    background-color: white;
+    display: inline-block;
+    color: #444444;
+    border: 1px solid #444444;
+    font-size: 16px;
+}
+.c-btn#logout:hover {
+    color: white;
+    background-color: #444444;
 }
 
 /*--------------------
@@ -109,6 +121,10 @@ header .logo_area h1 {
     font-size: 14px;
     font-weight: normal;
     margin: 0 auto;
+}
+
+header .logout_form {
+    display: inline-block;
 }
 
 /*--------------------

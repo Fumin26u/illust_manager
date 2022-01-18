@@ -13,7 +13,7 @@ function dbConnect() {
 // ClickJacking対策
 header('X-FRAME-OPTIONS: SAMEORIGIN');
 
-// タイムアウト制限を無効化
+// タイムアウト制限時間
 ini_set("max_execution_time", 480);
 
 // ダンプの簡略化
@@ -39,4 +39,22 @@ function periodReplace($text) {
     $pattern = '/^\.\r$/m';
     $text = preg_replace($pattern, "..\r", $text);
     return $text;
+}
+
+// ログインページ以外の場合、SESSIONを開始
+if (!isset($login)) {
+    session_start();
+
+    // SESSIONにユーザ名があれば、グローバル変数に挿入
+    if (isset($_SESSION['user_name'])) {
+        global $user_name, $is_premium;
+        $user_name = h($_SESSION['user_name']);
+        $is_premium = h($_SESSION['premium']);
+    }
+}
+
+// ログアウト処理
+if(isset($_GET['logout'])) {
+    $_SESSION = [];
+    header('location: ./', true, 303);
 }

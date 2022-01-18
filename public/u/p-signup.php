@@ -4,10 +4,10 @@ require_once($home . '../commonlib.php');
 
 $msg = [];
 
-session_start();
+// session_start();
 // csrf対策
-$_SESSION['token'] = bin2hex(random_bytes(32));
-$cToken = $_SESSION['token'];
+// $_SESSION['token'] = bin2hex(random_bytes(32));
+// $cToken = $_SESSION['token'];
 
 $url = 'https://fuminsv.sakura.ne.jp/idtest/public/u/signup.php?t=';
 // $url = 'https://imagedler.com/u/signup.php?t=';
@@ -142,7 +142,7 @@ $title = 'ユーザー登録 | TwimageDLer';
     <p>[送信]ボタンを押すと、入力したメールアドレス宛に確認メールが届きます。</p>
     <p>送信してから1時間以内に、確認メールに添付されているリンクをクリックし、本登録画面へ進んでください。</p>
 </div>
-<form action="<?= $_SERVER['PHP_SELF'] ?>" method="POST">
+<form action="<?= h($_SERVER['PHP_SELF']) ?>" method="POST">
     <dl class="form_list">
         <div>
             <dt>メールアドレス</dt>

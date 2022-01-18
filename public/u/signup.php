@@ -4,10 +4,12 @@ require_once($home . '../commonlib.php');
 
 $msg = [];
 
-session_start();
+// session_start();
 // csrf対策
-$_SESSION['token'] = bin2hex(random_bytes(32));
-$cToken = $_SESSION['token'];
+// if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+//     $_SESSION['token'] = bin2hex(random_bytes(32));
+//     $cToken = $_SESSION['token'];
+// }
 
 // 適切なアクセスかどうか(TRUE = 適切、 FALSE = 不適切)
 $is_proper_access = true;
@@ -20,6 +22,9 @@ try {
     $is_submitted = false;
     // データがPOSTされた際の処理
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+        // csrf対策
+        // if (!isset($_POST['ctoken']) || $_POST['ctoken'] !== $_SESSION['token']) $err[] = '不正なアクセスです。';
 
         // パスワードの同値チェック
         if (h($_POST['password']) !== h($_POST['confirm'])) {
@@ -130,7 +135,7 @@ $title = 'ユーザー登録 | TwimageDLer';
         <p><?= $m ?></p>
     <?php } ?>
 </div>
-<form action="<?= $_SERVER['PHP_SELF'] . '?t=' . $token ?>" method="POST">
+<form action="<?= h($_SERVER['PHP_SELF']) . '?t=' . $token ?>" method="POST">
     <dl class="form_list">
         <div>
             <dt>メールアドレス</dt>
@@ -172,12 +177,15 @@ $title = 'ユーザー登録 | TwimageDLer';
             </dd>
         </div>
     </dl>
+    <input type="hidden" name="ctoken" value="<?= $cToken ?>">
     <input type="submit" value="登録">
 </form>
 <?php } else { ?>
-<h2>登録しました</h2>
-<p>ユーザー登録ありがとうございます。以下からログインしてください。</p>
-<a href="login.php" class="c-btn">ログイン</a>
+<div class="description submitted">
+    <h2>登録しました</h2>
+    <p>ユーザー登録ありがとうございます。以下からログインしてください。</p>
+    <a href="login.php" class="c-btn">ログイン</a>
+</div>
 <?php } ?>
 </main>
 <?php include_once($home . '../footer.php') ?>

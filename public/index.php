@@ -1,6 +1,7 @@
 <?php
 $home = './';
 
+
 require($home. '../commonlib.php');
 require($home . '../apiset.php');
 
@@ -52,7 +53,7 @@ $minTime = $minDay . 'T' . $now;
         <p>期間指定で遡れる範囲は最大1カ月前までです。</p>
     </div>
     <?php // <small>数値のTwitter IDは、<a href="https://idtwi.com/" target="_blank" rel="noopener noreferrer">idtwi</a>などから検索できます。</small> ?>
-    <form action="<?= $_SERVER['PHP_SELF'] ?>" method="GET">
+    <form action="<?= h($_SERVER['PHP_SELF']) ?>" method="GET">
         <dl class="form_list">
             <div>
                 <dt>Twitter ID</dt>
