@@ -17,6 +17,7 @@ try {
     $pdo = dbConnect();
 
     $err = [];
+    $is_submitted = false;
     // データがPOSTされた際の処理
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
@@ -57,6 +58,7 @@ SQL;
 
             $pdo->commit();
             $msg[] = '登録しました。';
+            $is_submitted = true;
         }
  
     }
@@ -121,7 +123,7 @@ $title = 'ユーザー登録 | TwimageDLer';
     <p>お手数ですが、再度確認メールの送付手続きを行って下さい。</p>
     <a href="p-signup.php" class="c-btn">メール送付</a>
 </div>
-<?php } else { ?>
+<?php } else if (!$is_submitted) { ?>
 <div class="description"> 
     <p>以下の項目に内容を入力し、[登録]ボタンを押すとアカウントが登録されます。</p>
     <?php foreach ($msg as $m) { ?>
@@ -172,6 +174,10 @@ $title = 'ユーザー登録 | TwimageDLer';
     </dl>
     <input type="submit" value="登録">
 </form>
+<?php } else { ?>
+<h2>登録しました</h2>
+<p>ユーザー登録ありがとうございます。以下からログインしてください。</p>
+<a href="login.php" class="c-btn">ログイン</a>
 <?php } ?>
 </main>
 <?php include_once($home . '../footer.php') ?>

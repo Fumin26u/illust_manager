@@ -14,7 +14,7 @@ function dbConnect() {
 header('X-FRAME-OPTIONS: SAMEORIGIN');
 
 // タイムアウト制限を無効化
-ini_set("max_execution_time", 300);
+ini_set("max_execution_time", 480);
 
 // ダンプの簡略化
 function v($arg) {
