@@ -90,9 +90,10 @@ if (isset($user_id, $user_name)) {
         // ログインしているユーザIDのデータが存在する場合、時刻を設定
         if (!empty($row)) {
             $t = $row['latest_time'];
-            // URL引数st_timeが設定されている場合、その値に更新
-            $st_time = isset($_GET['st_time']) ? h($_GET['st_time']) : str_replace(' ', 'T', $t);
+            $st_time = str_replace(' ', 'T', $t);
         }
+        // URL引数st_timeが設定されている場合、その値に更新
+        if (isset($_GET['st_time'])) $st_time = h($_GET['st_time']);
 
     } catch (PDOException $e) {
         echo 'データベース接続に失敗しました';
