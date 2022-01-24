@@ -1,8 +1,6 @@
 <?php
 $home = './';
 
-
-require($home. '../commonlib.php');
 require($home . '../apiset.php');
 
 // URL引数idが空だった場合、初期表示にする
@@ -11,9 +9,99 @@ if (isset($_GET['id']) && $_GET['id'] == '') {
     exit;
 }
 
-if (isset($_GET['id'])) {
-    $likes = getTweets($_GET['id'], $_GET['st_time'], $_GET['ed_time']);
+if (isset($_GET['id'])) $likes = getTweets($_GET['id'], $_GET['st_time'], $_GET['ed_time']);
+
+// 保存ボタンが押された場合の処理
+if (isset($_POST['download'])) {
+    // ログインしている場合、期間指定の終了時刻をDBに登録
+    if (isset($user_id, $user_name)) {
+        try {
+                
+            $pdo = dbConnect();
+
+            // 既にDB(used_timeテーブル)に値がセットされているかどうか
+            $is_set_value = true;
+            $st = $pdo->prepare('SELECT user_id FROM used_time WHERE user_id = :user_id AND sns_type = "T"');
+            $st->bindValue(':user_id', $user_id, PDO::PARAM_INT);
+            $st->execute();
+            $row = $st->fetch(PDO::FETCH_ASSOC);
+            if (empty($row)) $is_set_value = false;
+
+            // URL引数から終了時刻を取得
+            $ed_getTime = h($_GET['ed_time']);
+            
+            $pdo->beginTransaction();
+
+            // DBに値が存在する場合、UPDATE
+            if ($is_set_value) {
+                $sql = <<<SQL
+UPDATE used_time SET
+latest_time = :latest_time
+WHERE 
+user_id = :user_id AND sns_type = 'T'
+SQL;
+            } else {
+                $sql = <<<SQL
+INSERT INTO used_time 
+(user_id, latest_time, sns_type) 
+VALUES 
+(:user_id, :latest_time, 'T')
+SQL;
+            }
+            $st = $pdo->prepare($sql);
+            $st->bindValue(':user_id', $user_id, PDO::PARAM_INT);
+            $st->bindValue(':latest_time', $ed_getTime, PDO::PARAM_STR);
+            $st->execute();
+
+            $pdo->commit();   
+
+        } catch (PDOException $e) {
+            echo 'データベース接続に失敗しました';
+            if (DEBUG) {
+                echo $e;
+            }
+        }
+
+        // リストから画像を抽出
+        $images = [];
+        foreach ($likes as $l) {
+            foreach ($l['images'] as $i) {
+                $images[] = $i;
+            }
+        }
+
+        // 画像をダウンロード
+        require_once($home . '../dlImages.php');
+        dlImages($images);
+    }
 }
+
+// ログインしている場合、期間指定の開始時刻の読み込みを行う
+if (isset($user_id, $user_name)) {
+    try {
+
+        $pdo = dbConnect();
+
+        $st = $pdo->prepare('SELECT latest_time FROM used_time WHERE user_id = :user_id AND sns_type = "T"');
+        $st->bindValue(':user_id', $user_id, PDO::PARAM_INT);
+        $st->execute();
+        $row = $st->fetch(PDO::FETCH_ASSOC);
+
+        // ログインしているユーザIDのデータが存在する場合、時刻を設定
+        if (!empty($row)) {
+            $t = $row['latest_time'];
+            // URL引数st_timeが設定されている場合、その値に更新
+            $st_time = isset($_GET['st_time']) ? h($_GET['st_time']) : str_replace(' ', 'T', $t);
+        }
+
+    } catch (PDOException $e) {
+        echo 'データベース接続に失敗しました';
+        if (DEBUG) {
+            echo $e;
+        }
+    }
+}
+
 
 // ページタイトルの設定
 $title = isset($_GET['id']) ? '@' . $_GET['id'] . 'のいいねツイート一覧 | TwimageDLer' : "TwimageDLer | \"いいね\"した画像の自動ダウンローダー";
@@ -62,7 +150,21 @@ $minTime = $minDay . 'T' . $now;
             <div>
                 <dt>期間指定</dt>
                 <dd>
-                    <input type="datetime-local" name="st_time" value="<?= isset($_GET['st_time']) ? h($_GET['st_time']) : '' ?>" min="<?= $minTime ?>" required>から<br><input type="datetime-local" name="ed_time" value="<?= isset($_GET['ed_time']) ? h($_GET['ed_time']) : $nowTime ?>" required>まで
+                    <input 
+                        type="datetime-local" 
+                        name="st_time" 
+                        value="<?= isset($st_time) ? $st_time : '' ?>" 
+                        min="<?= $minTime ?>" 
+                        required
+                    >
+                    から<br>
+                    <input 
+                        type="datetime-local" 
+                        name="ed_time" 
+                        value="<?= isset($_GET['ed_time']) ? h($_GET['ed_time']) : $nowTime ?>" 
+                        required
+                    >
+                    まで
                 </dd>
             </div>
         </dl>      

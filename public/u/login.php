@@ -14,7 +14,7 @@ try {
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         // user_nameからユーザ情報を取得
-        $st = $pdo->prepare('SELECT user_name, password, premium FROM user WHERE user_name = :user_name AND is_auth = TRUE');
+        $st = $pdo->prepare('SELECT user_id, user_name, password, premium FROM user WHERE user_name = :user_name AND is_auth = TRUE');
         $st->bindValue(':user_name', h($_POST['user_name']), PDO::PARAM_STR);
         // $st->bindValue(':password', $pass_hash, PDO::PARAM_STR);
         $st->execute();
@@ -30,6 +30,7 @@ try {
             // 上記エラーが無い場合、セッションにユーザ名とプレミアム会員判定を挿入
             session_start();
 
+            $_SESSION['user_id'] = $rows['user_id'];
             $_SESSION['user_name'] = $rows['user_name'];
             $_SESSION['premium'] = $rows['premium'];
 
