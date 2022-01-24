@@ -102,10 +102,6 @@ if (isset($user_id, $user_name)) {
     }
 }
 
-
-// ページタイトルの設定
-$title = isset($_GET['id']) ? '@' . $_GET['id'] . 'のいいねツイート一覧 | TwimageDLer' : "TwimageDLer | \"いいね\"した画像の自動ダウンローダー";
-
 // 現在時刻を生成
 $t = new DateTime();
 $today = $t->format('Y-m-d');
@@ -122,6 +118,17 @@ $minTime = $minDay . 'T' . $now;
 // echo('<pre>');
 // v($likes);
 // echo('</pre>');
+
+// メタタグの整備
+// ページタイトルの設定
+$title = isset($_GET['id']) ? '@' . $_GET['id'] . 'のいいねツイート一覧 | TwimageDLer' : "TwimageDLer | \"いいね\"した画像の自動ダウンローダー";
+
+// デスクリプション
+$description = "Twitterで自分が「いいね」をした画像を一括ダウンロードできるツールです。ユーザー登録を行うことにより、更に手軽にダウンロードを行うことができます。";
+
+$keywords = "Twitter,いいね,ダウンロード,画像,保存,一括";
+
+$canonical = "https://imagedler.com/";
 ?>
 <!DOCTYPE html>
 <html lang="ja">
@@ -129,6 +136,15 @@ $minTime = $minDay . 'T' . $now;
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title><?= $title ?></title>
 <link rel="stylesheet" href="top.css">
+<link rel="icon" href="<?= $home ?>favicon.png">
+<link rel="canonical" href="<?= $canonical ?>">
+<meta property="og:description" content="<?= $description ?>">
+<meta name="keywords" content="<?= $keywords ?>">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="TwimageDLer">
+<meta property="og:url" content="<?= $canonical ?>">
+<meta property="og:title" content="<?= $title ?>">
+<meta property="og:image" content="<?= $home ?>ogpimage.png">
 </head>
 <body>
 <?php include_once($home . '../header.php') ?>
