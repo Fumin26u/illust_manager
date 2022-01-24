@@ -1,0 +1,24 @@
+@import url('./style.css');
+
+/*--------------------
+
+    注意事項
+
+--------------------*/
+.caution {
+    margin: 1.5rem 0;
+}
+
+.caution p {
+    font-size: 14px;
+    margin: 4px 0;
+}
+
+/*--------------------
+
+	ダウンロードフォーム
+
+--------------------*/
+.download_area {
+    margin: 2em auto;
+}
