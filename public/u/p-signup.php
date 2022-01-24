@@ -128,6 +128,7 @@ $title = 'ユーザー登録 | TwimageDLer';
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title><?= $title ?></title>
 <link rel="stylesheet" href="signup.css">
+<link rel="icon" href="<?= $home ?>favicon.png">
 </head>
 <body>
 <?php include_once($home . '../header.php') ?>
