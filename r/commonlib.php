@@ -1,5 +1,5 @@
 <?php
-require_once('system-conf.php');
+require_once($home . '../../system-conf.php');
 
 // タイムゾーン設定
 date_default_timezone_set('Asia/Tokyo');
