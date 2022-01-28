@@ -200,9 +200,9 @@ $canonical = "https://imagedler.com/";
 <ul class="likes_list">
     <?php foreach($likes as $l) { ?>
         <li>
-            <p><?= $l['user'] ?></p>
+            <p class="user_name"><?= $l['user'] ?></p>
             <p><?= $l['post_time'] ?></p>
-            <p><?= $l['text'] ?></p>
+            <p class="tweet_content"><?= $l['text'] ?></p>
             <?php foreach($l['images'] as $i) { ?>
                 <img src="<?= $i ?>" alt="">
             <?php } ?>

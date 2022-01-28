@@ -56,7 +56,8 @@ function getTweets($id, $st_time, $ed_time) {
         $queue['post_time'] = $posted_date;
         $queue['user'] = $l->user->name;
         $text = $l->text;
-        $queue['text'] = substr($text, 0, strcspn($text, 'https://t.co/'));
+        // $queue['text'] = substr($text, 0, strcspn($text, 'https://t.co/'));
+        $queue['text'] = substr($text, 0, -24);
         $queue['images'] = [];
         $queue['url'] = $l->extended_entities->media[0]->url;
 

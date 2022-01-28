@@ -45,8 +45,12 @@
 .likes_list li p {
     margin: 0;
 }
-.likes_list li p:first-child {
+.likes_list li p.user_name {
     font-weight: bold;
+}
+.likes_list li p.tweet_content {
+    height: 48px;
+    overflow: auto;
 }
 
 .likes_list img {
