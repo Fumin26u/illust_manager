@@ -1,5 +1,5 @@
 <?php
-require('commonlib.php');
+require_once('commonlib.php');
 require_once($home . "../../vendor/autoload.php");
 use Abraham\TwitterOAuth\TwitterOAuth;
 
