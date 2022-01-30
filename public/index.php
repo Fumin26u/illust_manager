@@ -70,10 +70,10 @@ SQL;
             }
         }
 
-        // 画像をダウンロード
-        require_once($home . '../dlImages.php');
-        dlImages($images);
     }
+    // 画像をダウンロード
+    require_once($home . '../dlImages.php');
+    dlImages($images);
 }
 
 // ログインしている場合、期間指定の開始時刻の読み込みを行う
