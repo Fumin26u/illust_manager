@@ -61,15 +61,14 @@ SQL;
                 echo $e;
             }
         }
-
-        // リストから画像を抽出
-        $images = [];
-        foreach ($likes as $l) {
-            foreach ($l['images'] as $i) {
-                $images[] = $i;
-            }
+    }
+    
+    // リストから画像を抽出
+    $images = [];
+    foreach ($likes as $l) {
+        foreach ($l['images'] as $i) {
+            $images[] = $i;
         }
-
     }
     // 画像をダウンロード
     require_once($home . '../dlImages.php');
