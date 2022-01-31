@@ -119,6 +119,11 @@ if (isset($_POST['name'])) $name = h($_POST['name']);
 <body>
 <?php include_once($home . '../header.php') ?>
 <main>
+<div class="message">
+    <?php foreach ($msg as $m) { ?>
+        <p><?= $m ?></p>
+    <?php } ?>
+</div>
 <h2>お問い合わせ</h2>
 <p>質問・ご要望などございましたら、以下のフォームからお願いします。</p>
 <p><em>*</em>は必須入力です。</p>
