@@ -45,9 +45,13 @@ th, td {
     padding: 0 8px;
 }
 
-input {
+input, textarea {
     margin: 8px;
     padding: 8px 12px;
+}
+textarea {
+    width: 260px;
+    height: 100px;
 }
 
 input[type="submit"] {
