@@ -1,18 +1,16 @@
 <?php
-require_once("vendor/autoload.php");
+require('commonlib.php');
+require_once($home . "../../vendor/autoload.php");
 use Abraham\TwitterOAuth\TwitterOAuth;
-
-try {
-require_once('dlImages.php');
 
 // APIキー、トークンの設定
 function getTweets($id, $st_time, $ed_time) {
 
     // ツイートの最大取得件数(MAX200)
-    $count = 200;
+    $count = 150;
 
     // APIキーとトークン
-    include_once('apikey.php');
+    include_once('../../apikey.php');
 
     // APIキーとトークンを用いてTwitterOAuthに接続
     $connection = new TwitterOAuth($API_KEY, $API_KEY_SECRET, $ACCESS_TOKEN, $ACCESS_TOKEN_SECRET);
@@ -42,8 +40,6 @@ function getTweets($id, $st_time, $ed_time) {
 
     $likes = [];
     $queue = [];
-    // 全ての画像URLの一覧(ダウンロード時に利用)
-    $images = [];
     // キューにツイートを1つずつ挿入
     foreach ($likes_tweet_list as $l) {
 
@@ -65,9 +61,7 @@ function getTweets($id, $st_time, $ed_time) {
 
         // 画像は複数枚の可能性があるので配列に挿入
         foreach ($l->extended_entities->media as $m) {
-            $queue['images'][] = $m->media_url_https;
-            // 画像URL一覧の配列にも同様に挿入
-            $images[] = $m->media_url_https;
+            $queue['images'][] = $m->media_url_https;;
         }
 
         // キューのデータを一覧に追加
@@ -75,12 +69,7 @@ function getTweets($id, $st_time, $ed_time) {
 
     }
 
-    // URL引数$_POSTが設定された場合、ローカルに画像一覧をダウンロード
-    if (isset($_POST['download'])) dlImages($images);
-
     return $likes;
 }
-} catch (PDOException $e) {
-    echo "予期せぬエラーが発生しました。";
-    echo $e;
-}
+
+
