@@ -205,7 +205,6 @@ $canonical = "https://imagedler.com/";
         </li>
     <?php } ?>
 </ul>
-<?php } ?>
 </main>
 <?php include($home . '../footer.php') ?>
 <script src="<?= $home ?>../script.js"></script>
