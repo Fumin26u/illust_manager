@@ -61,19 +61,18 @@ SQL;
                 echo $e;
             }
         }
-
-        // リストから画像を抽出
-        $images = [];
-        foreach ($likes as $l) {
-            foreach ($l['images'] as $i) {
-                $images[] = $i;
-            }
-        }
-
-        // 画像をダウンロード
-        require_once($home . '../dlImages.php');
-        dlImages($images);
     }
+    
+    // リストから画像を抽出
+    $images = [];
+    foreach ($likes as $l) {
+        foreach ($l['images'] as $i) {
+            $images[] = $i;
+        }
+    }
+    // 画像をダウンロード
+    require_once($home . '../dlImages.php');
+    dlImages($images);
 }
 
 // ログインしている場合、期間指定の開始時刻の読み込みを行う
@@ -151,50 +150,43 @@ $canonical = "https://imagedler.com/";
 <body>
 <?php include_once($home . '../header.php') ?>
 <main>
-<h2>検索フォーム</h2>
-<p>以下の入力欄に取得したいユーザーのTwitter ID(@以降の文字)と、いつまでの投稿を取得したいかを期間指定してください。(全て必須入力)</p>
-<div class="caution">
-    <h3>注意事項</h3>
-    <p>画像の数が多いほど、ダウンロードに時間がかかります(画像数x1秒が目安)。また、画像数が多すぎると、ダウンロードできない場合があります。</p>
-    <p>期間指定で遡れる範囲は最大1カ月前までです。</p>
-</div>
-<?php // <small>数値のTwitter IDは、<a href="https://idtwi.com/" target="_blank" rel="noopener noreferrer">idtwi</a>などから検索できます。</small> ?>
-<form action="<?= h($_SERVER['PHP_SELF']) ?>" method="GET">
-    <dl class="form_list">
-        <div>
-            <dt>Twitter ID</dt>
-            <dd><input type="text" name="id" value="<?= isset($_GET['id']) ? h($_GET['id']) : '' ?>" required></dd>
-        </div>
-        <div>
-            <dt>期間指定</dt>
-            <dd>
-                <input 
-                    type="datetime-local" 
-                    name="st_time" 
-                    value="<?= isset($st_time) ? $st_time : '' ?>" 
-                    min="<?= $minTime ?>" 
-                    required
-                >
-                から<br>
-                <input 
-                    type="datetime-local" 
-                    name="ed_time" 
-                    value="<?= isset($_GET['ed_time']) ? h($_GET['ed_time']) : $nowTime ?>" 
-                    required
-                >
-                まで
-            </dd>
-        </div>
-    </dl>      
-    <input type="submit" value="送信">
-</form>
-<?php if (isset($likes)) { ?>
-<h2>いいねした画像一覧</h2>
-<p><?= count($likes) ?>個のツイートが取得されました。</p>
-<div class="download_area">
-    <p>[保存]ボタンを押すと、ダウンロードフォルダにZipファイルで保存されます。</p>
-    <form action="./index.php?st_time=<?= h($_GET['st_time']) ?>&ed_time=<?= h($_GET['ed_time']) ?>&id=<?= h($_GET['id']) ?>" method="POST">
-    <input type="submit" name="download" value="保存">
+    <h2>検索フォーム</h2>
+    <p>以下の入力欄に取得したいユーザーのTwitter ID(@以降の文字)と、いつまでの投稿を取得したいかを期間指定してください。(全て必須入力)</p>
+    <div class="caution">
+        <h3>注意事項</h3>
+        <p>画像の数が多いほど、ダウンロードに時間がかかります(画像数x1秒が目安)。また、画像数が多すぎると、ダウンロードできない場合があります。</p>
+        <p>期間指定で遡れる範囲は最大1カ月前までです。</p>
+        <p>ご要望・質問等ございましたら、<a href="<?= $home ?>mail/">こちらのフォーム</a>よりお願いします。</p>
+    </div>
+    <?php // <small>数値のTwitter IDは、<a href="https://idtwi.com/" target="_blank" rel="noopener noreferrer">idtwi</a>などから検索できます。</small> ?>
+    <form action="<?= h($_SERVER['PHP_SELF']) ?>" method="GET">
+        <dl class="form_list">
+            <div>
+                <dt>Twitter ID</dt>
+                <dd><input type="text" name="id" value="<?= isset($_GET['id']) ? h($_GET['id']) : '' ?>" required></dd>
+            </div>
+            <div>
+                <dt>期間指定</dt>
+                <dd>
+                    <input 
+                        type="datetime-local" 
+                        name="st_time" 
+                        value="<?= isset($st_time) ? $st_time : '' ?>" 
+                        min="<?= $minTime ?>" 
+                        required
+                    >
+                    から<br>
+                    <input 
+                        type="datetime-local" 
+                        name="ed_time" 
+                        value="<?= isset($_GET['ed_time']) ? h($_GET['ed_time']) : $nowTime ?>" 
+                        required
+                    >
+                    まで
+                </dd>
+            </div>
+        </dl>      
+        <input type="submit" value="送信">
     </form>
 </div>
 <ul class="likes_list">

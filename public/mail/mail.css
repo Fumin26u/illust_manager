@@ -1,0 +1,6 @@
+@import url('../style.css');
+
+em {
+    font-style: normal;
+    color: red;
+}
