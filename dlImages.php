@@ -24,7 +24,7 @@ function dlImages(array $images) {
 		curl_setopt($ch, CURLOPT_NOBODY, 0);
 
 		// タイムアウトの値
-		curl_setopt($ch, CURLOPT_TIMEOUT, 300);
+		curl_setopt($ch, CURLOPT_TIMEOUT, 480);
 
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
