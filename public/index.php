@@ -189,6 +189,8 @@ $canonical = "https://imagedler.com/";
         <input type="submit" value="送信">
     </form>
 </div>
+<?php if (isset($likes)) { ?>
+<p><?= count($likes) ?>件のツイートが取得されました。</p>
 <ul class="likes_list">
     <?php foreach($likes as $l) { ?>
         <li>
@@ -203,7 +205,8 @@ $canonical = "https://imagedler.com/";
                 <a href="<?= $l['url'] ?>" target="_blank" rel="noopener noreferrer"><?= $l['url'] ?></a>
             </p>
         </li>
-    <?php } ?>
+        <?php } 
+    } ?>
 </ul>
 </main>
 <?php include($home . '../footer.php') ?>

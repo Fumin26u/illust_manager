@@ -1,9 +1,11 @@
-# タイマー: 同時複数リクエストを制限
-import time
 # ドライバ: スクレイピング用のドライバ
 from selenium import webdriver
 # urllib: URL引数を読み込む
 import urllib.parse
+# タイマー: 同時複数リクエストを制限
+import time
+# 日付: いつまでのブックマークを取得するか
+import datetime
 # pixivpy: pixivからデータを抽出するAPI
 from pixivpy3 import *
 
@@ -29,9 +31,11 @@ bookmarks = aapi.user_bookmarks_illust(78079062, 'public')
 # print(bookmarks['next_url'])
 
 # 画像をurl配列に挿入
+# cont_reference = True
+# while cont_reference:
 for i, b in enumerate(bookmarks['illusts']):
-    res.insert(i, [])
-     
+    # res.insert(i)
+    
     # メタ情報の追加
     queue['post_time'] = b['create_date']
     # queue['user_id'] = b['user']['id']
@@ -53,7 +57,7 @@ for i, b in enumerate(bookmarks['illusts']):
     # キューを結果に挿入
     res.append(queue.copy())
 
-# print(res)
+print(res[29]['post_time'])
 
 
 

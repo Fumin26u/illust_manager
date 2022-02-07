@@ -5,6 +5,7 @@ use Abraham\TwitterOAuth\TwitterOAuth;
 
 // APIキー、トークンの設定
 function getTweets($id, $st_time, $ed_time) {
+    v($st_time);
 
     // ツイートの最大取得件数(MAX200)
     $count = 150;
