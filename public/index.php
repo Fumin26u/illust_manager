@@ -188,42 +188,26 @@ $canonical = "https://imagedler.com/";
         </dl>      
         <input type="submit" value="送信">
     </form>
-    <?php if (isset($likes)) { ?>
-    <h2>いいねした画像一覧</h2>
-    <p><?= count($likes) ?>個のツイートが取得されました。</p>
-    <div class="download_area">
-        <p>[保存]ボタンを押すと、ダウンロードフォルダにZipファイルで保存されます。</p>
-        <form action="./index.php?st_time=<?= h($_GET['st_time']) ?>&ed_time=<?= h($_GET['ed_time']) ?>&id=<?= h($_GET['id']) ?>" method="POST">
-        <input type="submit" name="download" value="保存">
-        </form>
-    </div>
-    <table>
-        <tbody>
-        <tr>
-            <th>ツイート時間</th>
-            <th>ツイート者</th>
-            <th>ツイート内容</th>
-            <th>ツイート画像</th>
-        </tr>
-        <?php foreach($likes as $l) { ?>
-            <tr>
-            <td><?= $l['post_time'] ?></td>
-            <td><?= $l['user'] ?></td>
-            <td><?= $l['text'] ?></td>
-            <td>
-                <?php foreach($l['images'] as $i) { ?>
+</div>
+<?php if (isset($likes)) { ?>
+<p><?= count($likes) ?>件のツイートが取得されました。</p>
+<ul class="likes_list">
+    <?php foreach($likes as $l) { ?>
+        <li>
+            <p class="user_name"><?= $l['user'] ?></p>
+            <p><?= $l['post_time'] ?></p>
+            <p class="tweet_content"><?= $l['text'] ?></p>
+            <?php foreach($l['images'] as $i) { ?>
                 <img src="<?= $i ?>" alt="">
-                <?php } ?>
-                <p>
-                    ツイート元リンク:
-                    <a href="<?= $l['url'] ?>" target="_blank" rel="noopener noreferrer"><?= $l['url'] ?></a>
-                </p>
-            </td>
-            </tr>
-        <?php } ?>
-        </tbody>
-    </table>
-    <?php } ?>
+            <?php } ?>
+            <p>
+                ツイート元リンク:
+                <a href="<?= $l['url'] ?>" target="_blank" rel="noopener noreferrer"><?= $l['url'] ?></a>
+            </p>
+        </li>
+        <?php } 
+    } ?>
+</ul>
 </main>
 <?php include($home . '../footer.php') ?>
 <script src="<?= $home ?>../script.js"></script>
