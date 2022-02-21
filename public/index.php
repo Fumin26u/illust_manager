@@ -2,6 +2,7 @@
 $home = './';
 
 require($home . '../apiset.php');
+v($_GET);
 
 // URL引数idが空だった場合、初期表示にする
 if (isset($_GET['id']) && $_GET['id'] == '') {
@@ -163,11 +164,27 @@ $canonical = "https://imagedler.com/";
         <dl class="form_list">
             <div>
                 <dt>Twitter ID</dt>
-                <dd><input type="text" name="id" value="<?= isset($_GET['id']) ? h($_GET['id']) : '' ?>" required></dd>
+                <dd>
+                    <input type="text" name="id" value="<?= isset($_GET['id']) ? h($_GET['id']) : '' ?>" required>
+                </dd>
             </div>
             <div>
-                <dt>期間指定</dt>
+                <dt>詳細設定</dt>
                 <dd>
+                    <input 
+                        type="checkbox"
+                        name="latest_dl"
+                        id="latest_dl"
+                        checked
+                    >
+                    <label for="latest_dl">前回保存した画像以降を取得</label><br>
+                    <input
+                        type="checkbox"
+                        name="using_term"
+                        id="using_term"
+                        checked
+                    >
+                    <label for="using_term">期間指定を行う</label>
                     <input 
                         type="datetime-local" 
                         name="st_time" 
@@ -175,7 +192,7 @@ $canonical = "https://imagedler.com/";
                         min="<?= $minTime ?>" 
                         required
                     >
-                    から<br>
+                    から<br class="br">
                     <input 
                         type="datetime-local" 
                         name="ed_time" 

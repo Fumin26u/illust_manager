@@ -5,10 +5,10 @@ use Abraham\TwitterOAuth\TwitterOAuth;
 
 // APIキー、トークンの設定
 function getTweets($id, $st_time, $ed_time) {
-    v($st_time);
+    // v($st_time);
 
     // ツイートの最大取得件数(MAX200)
-    $count = 150;
+    $count = 4;
 
     // APIキーとトークン
     include_once('../../apikey.php');
@@ -31,9 +31,9 @@ function getTweets($id, $st_time, $ed_time) {
     // 「いいね」したツイート一覧を取得
     $likes_tweet_list = $connection->get($point, ['screen_name' => $account, 'count' => $count]);
 
-    // echo '<pre>';
-    // var_dump($likes_tweet_list);
-    // echo '</pre>';
+    echo '<pre>';
+    var_dump($likes_tweet_list);
+    echo '</pre>';
 
     // GETで取得した日付のフォーマット
     $st_getTime = date('Y-m-d H:i:s', strtotime((string) $st_time));

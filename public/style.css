@@ -19,7 +19,7 @@ h3 {
 }
 
 dl, dt, dd {
-    margin: 0;
+    margin: 1em 0;
     padding: 0;
 }
 
@@ -155,7 +155,7 @@ header .logout_form {
     input[type="datetime-local"] {
         display: inline-block;
     }
-    .form_list br {
+    .form_list .br {
         display: none;
     }
 }
