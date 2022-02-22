@@ -4,11 +4,11 @@ require_once($home . "../../vendor/autoload.php");
 use Abraham\TwitterOAuth\TwitterOAuth;
 
 // APIキー、トークンの設定
-function getTweets($id, $st_time, $ed_time) {
+function getTweets($id, $count, $latest_dl, $using_term, $st_time = false, $ed_time = false) {
     // v($st_time);
 
-    // ツイートの最大取得件数(MAX200)
-    $count = 4;
+    // ループ毎に取得するツイート数(MAX20)
+    $each_count = 20;
 
     // APIキーとトークン
     include_once('../../apikey.php');
@@ -29,15 +29,17 @@ function getTweets($id, $st_time, $ed_time) {
     $point = $endPoint;
 
     // 「いいね」したツイート一覧を取得
-    $likes_tweet_list = $connection->get($point, ['screen_name' => $account, 'count' => $count]);
+    $likes_tweet_list = $connection->get($point, ['screen_name' => $account, 'count' => $each_count]);
 
     echo '<pre>';
     var_dump($likes_tweet_list);
     echo '</pre>';
 
-    // GETで取得した日付のフォーマット
-    $st_getTime = date('Y-m-d H:i:s', strtotime((string) $st_time));
-    $ed_getTime = date('Y-m-d H:i:s', strtotime((string) $ed_time));
+    // 期間指定を行う場合GETで取得した日付のフォーマットをする
+    if ($using_term) {
+        $st_getTime = date('Y-m-d H:i:s', strtotime((string) $st_time));
+        $ed_getTime = date('Y-m-d H:i:s', strtotime((string) $ed_time));
+    }
 
     $likes = [];
     $queue = [];
@@ -46,14 +48,17 @@ function getTweets($id, $st_time, $ed_time) {
 
         // そのツイートの投稿日時を取得
         $posted_date = date('Y-m-d H:i:s', strtotime((string) $l->created_at));
-
-        // 投稿日時がGETで取得した日付より古い場合、キューへの挿入を終了
-        if ($posted_date < $st_getTime) break;
-        // 投稿日時がGETで取得した日付より新しい場合、キューに挿入しない
-        if ($posted_date > $ed_getTime) continue;
+        // 期間指定を行う場合、キューへの挿入判定をする
+        if ($using_term) {
+            // 投稿日時がGETで取得した日付より古い場合、キューへの挿入を終了
+            if ($posted_date < $st_getTime) break;
+            // 投稿日時がGETで取得した日付より新しい場合、キューに挿入しない
+            if ($posted_date > $ed_getTime) continue;
+        }
 
         // 画像付きツイートでない場合、キューに挿入しない
         if (!isset($l->extended_entities)) continue;
+        $queue['twi_id'] = $l->id_str;
         $queue['post_time'] = $posted_date;
         $queue['user'] = $l->user->name;
         $text = $l->text;

@@ -10,7 +10,19 @@ if (isset($_GET['id']) && $_GET['id'] == '') {
     exit;
 }
 
-if (isset($_GET['id'])) $likes = getTweets($_GET['id'], $_GET['st_time'], $_GET['ed_time']);
+// 送信ボタンが押された場合の処理
+if (isset($_GET['id'])) {
+    // 最大画像取得数
+    $count = 200;
+    // 「前回保存した画像移行を取得」にチェックが入っている場合
+    $latest_dl = isset($_GET['latest_dl']) ? true : false;
+    // 「期間指定を行う」にチェックが入っていた場合
+    if (isset($_GET['using_term'])) {
+        $likes = getTweets($_GET['id'], $count, $latest_dl, true, $_GET['st_time'], $_GET['ed_time']);
+    } else {
+        $likes = getTweets($_GET['id'], $count, $latest_dl, false);
+    }
+}
 
 // 保存ボタンが押された場合の処理
 if (isset($_POST['download'])) {
@@ -20,6 +32,7 @@ if (isset($_POST['download'])) {
                 
             $pdo = dbConnect();
 
+            // used_timeテーブルの確認
             // 既にDB(used_timeテーブル)に値がセットされているかどうか
             $is_set_value = true;
             $st = $pdo->prepare('SELECT user_id FROM used_time WHERE user_id = :user_id AND sns_type = "T"');
@@ -52,6 +65,38 @@ SQL;
             $st = $pdo->prepare($sql);
             $st->bindValue(':user_id', $user_id, PDO::PARAM_INT);
             $st->bindValue(':latest_time', $ed_getTime, PDO::PARAM_STR);
+            $st->execute();
+
+            // latest_dlテーブルの確認
+            // 既にDB(used_timeテーブル)に値がセットされているかどうか
+            $is_set_value = true;
+            $st = $pdo->prepare('SELECT user_id FROM latest_dl WHERE user_id = :user_id AND sns_type = "T"');
+            $st->bindValue(':user_id', $user_id, PDO::PARAM_INT);
+            $st->execute();
+            $row = $st->fetch(PDO::FETCH_ASSOC);
+            if (empty($row)) $is_set_value = false;
+
+            // DBに値が存在する場合、UPDATE
+            if ($is_set_value) {
+                $sql = <<<SQL
+UPDATE latest_dl SET
+sns_user_id = :sns_user_id,
+created_at = NOW()
+WHERE 
+user_id = :user_id AND sns_type = 'T'
+SQL;
+            } else {
+                $sql = <<<SQL
+INSERT INTO latest_dl 
+(user_id, sns_user_id, sns_type, created_at)
+VALUES 
+(:user_id, :sns_user_id, 'T', NOW())
+SQL;    
+            }
+            $st = $pdo->prepare($sql);
+            $st->bindValue(':user_id', $user_id, PDO::PARAM_INT);
+            // ツイートIDは数値だが、桁数が12以上なのでVARCHAR型で保存
+            $st->bindValue(':sns_user_id', $twi_id, PDO::PARAM_STR);
             $st->execute();
 
             $pdo->commit();   
