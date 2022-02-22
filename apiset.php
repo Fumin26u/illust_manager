@@ -30,14 +30,18 @@ function getTweets($id, $count, $latest_dl, $using_term, $st_time = false, $ed_t
     $each_count = 50;
 
     $likes = [];
-    $max_id = 1496095626936954891;
+    $max_id = 0;
     while ($counter > 0) {
         // カウンタの進行
         if ($counter < $each_count) $each_count = $counter;
         $counter -= $each_count;
 
         // 「いいね」したツイート一覧を取得
-        $likes_tweet_list = $connection->get($point, ['screen_name' => $account, 'count' => $each_count, 'max_id' => $max_id]);
+        if (empty($likes)) {
+            $likes_tweet_list = $connection->get($point, ['screen_name' => $account, 'count' => $each_count]);
+        } else {
+            $likes_tweet_list = $connection->get($point, ['screen_name' => $account, 'count' => $each_count, 'max_id' => $max_id]);
+        }
     
         // echo '<pre>';
         // var_dump($likes_tweet_list);
