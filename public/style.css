@@ -7,6 +7,7 @@
 --------------------*/
 * {
     font-family: 'メイリオ', 'Meiryo', 'Arial';
+    /* font-family: "Yu Gothic Medium", "YuGothicMedium", sans-serif; */
     margin: 0;
     padding: 0;
 }
@@ -123,18 +124,34 @@ header {
     justify-content: space-between;
 }
 
-header .logo_area a {
+header .header_left a {
     color: black;
     text-decoration: none;
+    display: inline-block;
+    vertical-align: middle;
 }
-header .logo_area .title {
+header .header_left .title {
     font-size: 24px;
     font-weight: bold;
 }
-header .logo_area h1 {
+header .header_left h1 {
     font-size: 14px;
     font-weight: normal;
     margin: 0 auto;
+}
+
+header .header_left .link_area {
+    display: inline-block;
+    vertical-align: middle;
+    font-size: 18px;
+    margin: 0 1em;
+}
+header .header_left .link_area a {
+    color: royalblue;
+    padding: 0 8px;
+}
+header .header_left .link_area a:hover {
+    text-decoration: underline;
 }
 
 header .logout_form {

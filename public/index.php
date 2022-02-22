@@ -2,6 +2,7 @@
 $home = './';
 
 require($home . '../apiset.php');
+require('versions.php');
 
 // URL引数idが空だった場合、初期表示にする
 if (isset($_GET['id']) && $_GET['id'] == '') {
@@ -219,12 +220,6 @@ $canonical = "https://imagedler.com/";
 <main>
     <h2>検索フォーム</h2>
     <p>以下の入力欄に取得したいユーザーのTwitter ID(@以降の文字)と、いつまでの投稿を取得したいかを期間指定してください。(全て必須入力)</p>
-    <div class="caution">
-        <h3>注意事項</h3>
-        <p>画像の数が多いほど、ダウンロードに時間がかかります(画像数x1秒が目安)。また、画像数が多すぎると、ダウンロードできない場合があります。</p>
-        <p>期間指定で遡れる範囲は最大1カ月前までです。</p>
-        <p>ご要望・質問等ございましたら、<a href="<?= $home ?>mail/">こちらのフォーム</a>よりお願いします。</p>
-    </div>
     <?php // <small>数値のTwitter IDは、<a href="https://idtwi.com/" target="_blank" rel="noopener noreferrer">idtwi</a>などから検索できます。</small> ?>
     <form action="<?= h($_SERVER['PHP_SELF']) ?>" method="GET">
         <dl class="form_list">
@@ -303,6 +298,26 @@ $canonical = "https://imagedler.com/";
         <?php } 
     } ?>
 </ul>
+<section id="caution">
+    <h3>注意事項</h3>
+    <p>画像の数が多いほど、ダウンロードに時間がかかります(画像数x1秒が目安)。また、画像数が多すぎると、ダウンロードできない場合があります。</p>
+    <p>期間指定で遡れる範囲は最大1カ月前までです。</p>
+    <p>ご要望・質問等ございましたら、<a href="<?= $home ?>mail/">こちらのフォーム</a>よりお願いします。</p>
+</section>
+<section id="versions">
+    <h3>更新履歴</h3>
+    <dl class="form_list">
+        <?php foreach ($versions_log as $v) { ?>
+            <div>
+                <dt><?= $v['date'] ?></dt>
+                <dd>
+                    <p class="version"><?= $v['version'] ?></p>
+                    <p><?= $v['content'] ?></p>
+                </dd>
+            </div>
+        <?php } ?>
+    </dl>
+</section>
 </main>
 <?php include($home . '../footer.php') ?>
 <script src="<?= $home ?>../script.js"></script>
