@@ -2,7 +2,6 @@
 $home = './';
 
 require($home . '../apiset.php');
-v($_GET);
 
 // URL引数idが空だった場合、初期表示にする
 if (isset($_GET['id']) && $_GET['id'] == '') {
@@ -13,10 +12,22 @@ if (isset($_GET['id']) && $_GET['id'] == '') {
 // 送信ボタンが押された場合の処理
 if (isset($_GET['id'])) {
     // 最大画像取得数
-    $count = 200;
+    $count = h($_GET['count']);
+
+    $latest_dl = false;
     // 「前回保存した画像移行を取得」にチェックが入っている場合
-    $latest_dl = isset($_GET['latest_dl']) ? true : false;
-    // 「期間指定を行う」にチェックが入っていた場合
+    if (isset($_GET['latest_dl'])) {
+        $pdo = dbConnect();
+        // latest_dlテーブルの確認
+        $st = $pdo->prepare('SELECT post_id FROM latest_dl WHERE user_id = :user_id AND sns_type = "T"');
+        $st->bindValue(':user_id', $user_id, PDO::PARAM_INT);
+        $st->execute();
+        $row = $st->fetch(PDO::FETCH_ASSOC);
+        // latest_dlテーブルに前回保存した画像の投稿IDがある場合、変数に挿入
+        if ($row['post_id'] !== "") $latest_dl = $row['post_id']; 
+    }
+
+    // ツイートの取得処理(期間指定ありなしで変化)
     if (isset($_GET['using_term'])) {
         $likes = getTweets($_GET['id'], $count, $latest_dl, true, $_GET['st_time'], $_GET['ed_time']);
     } else {
@@ -80,7 +91,7 @@ SQL;
             if ($is_set_value) {
                 $sql = <<<SQL
 UPDATE latest_dl SET
-sns_user_id = :sns_user_id,
+post_id = :post_id,
 created_at = NOW()
 WHERE 
 user_id = :user_id AND sns_type = 'T'
@@ -88,15 +99,15 @@ SQL;
             } else {
                 $sql = <<<SQL
 INSERT INTO latest_dl 
-(user_id, sns_user_id, sns_type, created_at)
+(user_id, post_id, sns_type, created_at)
 VALUES 
-(:user_id, :sns_user_id, 'T', NOW())
+(:user_id, :post_id, 'T', NOW())
 SQL;    
             }
             $st = $pdo->prepare($sql);
             $st->bindValue(':user_id', $user_id, PDO::PARAM_INT);
             // ツイートIDは数値だが、桁数が12以上なのでVARCHAR型で保存
-            $st->bindValue(':sns_user_id', $twi_id, PDO::PARAM_STR);
+            $st->bindValue(':post_id', h($likes[0]['post_id']), PDO::PARAM_STR);
             $st->execute();
 
             $pdo->commit();   
@@ -161,6 +172,16 @@ $m = new DateTime();
 $minDay = $m->modify("-1 months")->format('Y-m-d'); 
 $minTime = $minDay . 'T' . $now;
 
+// DLフォームのaction値の設定
+$action = '';
+if (isset($_GET['id'])) {
+    $action .= 'id=' . h($_GET['id']) . '&count=' . h($_GET['count']);
+    $action .= isset($_GET['latest_dl']) ?  '&latest_dl=on' : '';
+    $action .= isset($_GET['using_term']) ?  '&using_term=on' : '';
+    $action .= isset($_GET['st_time']) ?  '&st_time=' . h($_GET['st_time']) : '';
+    $action .= isset($_GET['ed_time']) ?  '&ed_time=' . h($_GET['ed_time']) : '';
+}
+
 // echo('<pre>');
 // v($likes);
 // echo('</pre>');
@@ -214,20 +235,26 @@ $canonical = "https://imagedler.com/";
                 </dd>
             </div>
             <div>
+                <dt>取得ツイート数(最大400)</dt>
+                <dd>
+                    <input type="number" name="count" value="<?= isset($_GET['count']) ? h($_GET['count']) : '100' ?>" max="400" min="1" required>
+                </dd>
+            </div>
+            <div>
                 <dt>詳細設定</dt>
                 <dd>
                     <input 
                         type="checkbox"
                         name="latest_dl"
                         id="latest_dl"
-                        checked
+                        <?= !isset($_GET['id']) || isset($_GET['latest_dl']) ? 'checked' : '' ?>
                     >
                     <label for="latest_dl">前回保存した画像以降を取得</label><br>
                     <input
                         type="checkbox"
                         name="using_term"
                         id="using_term"
-                        checked
+                        <?= isset($_GET['using_term']) ? 'checked' : '' ?>
                     >
                     <label for="using_term">期間指定を行う</label>
                     <input 
@@ -253,6 +280,12 @@ $canonical = "https://imagedler.com/";
 </div>
 <?php if (isset($likes)) { ?>
 <p><?= count($likes) ?>件のツイートが取得されました。</p>
+<div class="download_area">
+    <p>[保存]ボタンを押すと、ダウンロードフォルダにZipファイルで保存されます。</p>
+    <form action="./index.php?<?= $action ?>" method="POST">
+    <input type="submit" name="download" value="保存">
+    </form>
+</div>
 <ul class="likes_list">
     <?php foreach($likes as $l) { ?>
         <li>
