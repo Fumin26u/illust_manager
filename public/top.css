@@ -5,11 +5,11 @@
     注意事項
 
 --------------------*/
-.caution {
-    margin: 1.5rem 0;
+#caution {
+    margin: 6em 0 4em;
 }
 
-.caution p {
+#caution p {
     font-size: 14px;
     margin: 4px 0;
 }

@@ -7,11 +7,21 @@
 --------------------*/
 * {
     font-family: 'メイリオ', 'Meiryo', 'Arial';
+    /* font-family: "Yu Gothic Medium", "YuGothicMedium", sans-serif; */
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background: #f5f5f5;
+    position: relative;
 }
 
 main {
     margin: 0 auto;
+    padding: 2em;
     max-width: 1280px;
+    background: white;
 }
 
 h3 {
@@ -19,7 +29,7 @@ h3 {
 }
 
 dl, dt, dd {
-    margin: 0;
+    margin: 1em 0;
     padding: 0;
 }
 
@@ -98,26 +108,50 @@ input[type="submit"] {
 --------------------*/
 
 header {
-    display: flex;
-    justify-content: space-between;
-    max-width: 1296px;
-    box-sizing: border-box;
-    margin: 0 auto;
-    padding: 4px 8px;
+    background: white;
+    box-shadow: 2px 2px 2px #aaa;
+    z-index: 99;
+    position: sticky;
+    top: 0;
 }
 
-header .logo_area a {
+.header_container {
+    max-width: 1296px;
+    margin: 0 auto;
+    box-sizing: border-box;
+    display: flex;
+    padding: 8px 0;
+    justify-content: space-between;
+}
+
+header .header_left a {
     color: black;
     text-decoration: none;
+    display: inline-block;
+    vertical-align: middle;
 }
-header .logo_area .title {
+header .header_left .title {
     font-size: 24px;
     font-weight: bold;
 }
-header .logo_area h1 {
+header .header_left h1 {
     font-size: 14px;
     font-weight: normal;
     margin: 0 auto;
+}
+
+header .header_left .link_area {
+    display: inline-block;
+    vertical-align: middle;
+    font-size: 18px;
+    margin: 0 1em;
+}
+header .header_left .link_area a {
+    color: royalblue;
+    padding: 0 8px;
+}
+header .header_left .link_area a:hover {
+    text-decoration: underline;
 }
 
 header .logout_form {
@@ -155,7 +189,7 @@ header .logout_form {
     input[type="datetime-local"] {
         display: inline-block;
     }
-    .form_list br {
+    .form_list .br {
         display: none;
     }
 }
