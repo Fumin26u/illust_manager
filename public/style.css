@@ -7,11 +7,20 @@
 --------------------*/
 * {
     font-family: 'メイリオ', 'Meiryo', 'Arial';
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background: #f5f5f5;
+    position: relative;
 }
 
 main {
     margin: 0 auto;
+    padding: 2em;
     max-width: 1280px;
+    background: white;
 }
 
 h3 {
@@ -98,12 +107,20 @@ input[type="submit"] {
 --------------------*/
 
 header {
-    display: flex;
-    justify-content: space-between;
+    background: white;
+    box-shadow: 2px 2px 2px #aaa;
+    z-index: 99;
+    position: sticky;
+    top: 0;
+}
+
+.header_container {
     max-width: 1296px;
-    box-sizing: border-box;
     margin: 0 auto;
-    padding: 4px 8px;
+    box-sizing: border-box;
+    display: flex;
+    padding: 8px 0;
+    justify-content: space-between;
 }
 
 header .logo_area a {

@@ -1,6 +1,7 @@
 <?php
 $home = "../";
 require_once($home . '../commonlib.php');
+$msg = [];
 
 // メール送信
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
