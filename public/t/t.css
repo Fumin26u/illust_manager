@@ -1,0 +1,17 @@
+@import url('../style.css');
+.tou_content {
+    margin: 0 4em;
+}
+
+.tou_content > div {
+    margin: 2em 0;
+}
+
+.tou_content li, 
+.tou_content p {
+    margin: 8px 0;
+}
+
+.tou_content ol > ol {
+    padding-left: 32px;
+}
