@@ -1,7 +1,15 @@
 <?php
+/*--------------------------------------------------------------------------------
+
+[※利用規約とプライバシーポリシーについて]
+金銭に関わる項目は消去してあるため、有料サービスの開発の際は再度挿入すること
+
+--------------------------------------------------------------------------------*/
+
 $home = './';
 
 require($home . '../apiset.php');
+require('versions.php');
 
 // URL引数idが空だった場合、初期表示にする
 if (isset($_GET['id']) && $_GET['id'] == '') {
@@ -9,7 +17,31 @@ if (isset($_GET['id']) && $_GET['id'] == '') {
     exit;
 }
 
-if (isset($_GET['id'])) $likes = getTweets($_GET['id'], $_GET['st_time'], $_GET['ed_time']);
+// 送信ボタンが押された場合の処理
+if (isset($_GET['id'])) {
+    // 最大画像取得数
+    $count = h($_GET['count']);
+
+    $latest_dl = false;
+    // 「前回保存した画像移行を取得」にチェックが入っている場合
+    if (isset($_GET['latest_dl'])) {
+        $pdo = dbConnect();
+        // latest_dlテーブルの確認
+        $st = $pdo->prepare('SELECT post_id FROM latest_dl WHERE user_id = :user_id AND sns_type = "T"');
+        $st->bindValue(':user_id', $user_id, PDO::PARAM_INT);
+        $st->execute();
+        $row = $st->fetch(PDO::FETCH_ASSOC);
+        // latest_dlテーブルに前回保存した画像の投稿IDがある場合、変数に挿入
+        if ($row['post_id'] !== "") $latest_dl = $row['post_id']; 
+    }
+
+    // ツイートの取得処理(期間指定ありなしで変化)
+    if (isset($_GET['using_term'])) {
+        $likes = getTweets($_GET['id'], $count, $latest_dl, true, $_GET['st_time'], $_GET['ed_time']);
+    } else {
+        $likes = getTweets($_GET['id'], $count, $latest_dl, false);
+    }
+}
 
 // 保存ボタンが押された場合の処理
 if (isset($_POST['download'])) {
@@ -19,6 +51,7 @@ if (isset($_POST['download'])) {
                 
             $pdo = dbConnect();
 
+            // used_timeテーブルの確認
             // 既にDB(used_timeテーブル)に値がセットされているかどうか
             $is_set_value = true;
             $st = $pdo->prepare('SELECT user_id FROM used_time WHERE user_id = :user_id AND sns_type = "T"');
@@ -51,6 +84,38 @@ SQL;
             $st = $pdo->prepare($sql);
             $st->bindValue(':user_id', $user_id, PDO::PARAM_INT);
             $st->bindValue(':latest_time', $ed_getTime, PDO::PARAM_STR);
+            $st->execute();
+
+            // latest_dlテーブルの確認
+            // 既にDB(used_timeテーブル)に値がセットされているかどうか
+            $is_set_value = true;
+            $st = $pdo->prepare('SELECT user_id FROM latest_dl WHERE user_id = :user_id AND sns_type = "T"');
+            $st->bindValue(':user_id', $user_id, PDO::PARAM_INT);
+            $st->execute();
+            $row = $st->fetch(PDO::FETCH_ASSOC);
+            if (empty($row)) $is_set_value = false;
+
+            // DBに値が存在する場合、UPDATE
+            if ($is_set_value) {
+                $sql = <<<SQL
+UPDATE latest_dl SET
+post_id = :post_id,
+created_at = NOW()
+WHERE 
+user_id = :user_id AND sns_type = 'T'
+SQL;
+            } else {
+                $sql = <<<SQL
+INSERT INTO latest_dl 
+(user_id, post_id, sns_type, created_at)
+VALUES 
+(:user_id, :post_id, 'T', NOW())
+SQL;    
+            }
+            $st = $pdo->prepare($sql);
+            $st->bindValue(':user_id', $user_id, PDO::PARAM_INT);
+            // ツイートIDは数値だが、桁数が12以上なのでVARCHAR型で保存
+            $st->bindValue(':post_id', h($likes[0]['post_id']), PDO::PARAM_STR);
             $st->execute();
 
             $pdo->commit();   
@@ -115,6 +180,16 @@ $m = new DateTime();
 $minDay = $m->modify("-1 months")->format('Y-m-d'); 
 $minTime = $minDay . 'T' . $now;
 
+// DLフォームのaction値の設定
+$action = '';
+if (isset($_GET['id'])) {
+    $action .= 'id=' . h($_GET['id']) . '&count=' . h($_GET['count']);
+    $action .= isset($_GET['latest_dl']) ?  '&latest_dl=on' : '';
+    $action .= isset($_GET['using_term']) ?  '&using_term=on' : '';
+    $action .= isset($_GET['st_time']) ?  '&st_time=' . h($_GET['st_time']) : '';
+    $action .= isset($_GET['ed_time']) ?  '&ed_time=' . h($_GET['ed_time']) : '';
+}
+
 // echo('<pre>');
 // v($likes);
 // echo('</pre>');
@@ -152,22 +227,44 @@ $canonical = "https://imagedler.com/";
 <main>
     <h2>検索フォーム</h2>
     <p>以下の入力欄に取得したいユーザーのTwitter ID(@以降の文字)と、いつまでの投稿を取得したいかを期間指定してください。(全て必須入力)</p>
-    <div class="caution">
-        <h3>注意事項</h3>
-        <p>画像の数が多いほど、ダウンロードに時間がかかります(画像数x1秒が目安)。また、画像数が多すぎると、ダウンロードできない場合があります。</p>
-        <p>期間指定で遡れる範囲は最大1カ月前までです。</p>
-        <p>ご要望・質問等ございましたら、<a href="<?= $home ?>mail/">こちらのフォーム</a>よりお願いします。</p>
-    </div>
+    <small>
+        使用する前に、<a href="<?= $home ?>t/terms_of_use.php">利用規約</a>と<a href="<?= $home ?>t/privacy_policy.php">プライバシーポリシー</a>の確認をお願いします。<br>
+        [送信]ボタンを押した(またはユーザー登録を行った)時点で、利用規約とプライバシーポリシーに同意したとみなします。
+    </small>
     <?php // <small>数値のTwitter IDは、<a href="https://idtwi.com/" target="_blank" rel="noopener noreferrer">idtwi</a>などから検索できます。</small> ?>
     <form action="<?= h($_SERVER['PHP_SELF']) ?>" method="GET">
         <dl class="form_list">
             <div>
                 <dt>Twitter ID</dt>
-                <dd><input type="text" name="id" value="<?= isset($_GET['id']) ? h($_GET['id']) : '' ?>" required></dd>
+                <dd>
+                    <input type="text" name="id" value="<?= isset($_GET['id']) ? h($_GET['id']) : '' ?>" required>
+                </dd>
             </div>
             <div>
-                <dt>期間指定</dt>
+                <dt>取得ツイート数<br>(最大400)</dt>
                 <dd>
+                    <input type="number" name="count" value="<?= isset($_GET['count']) ? h($_GET['count']) : '100' ?>" max="400" min="1" required>
+                </dd>
+            </div>
+            <div>
+                <dt>詳細設定</dt>
+                <dd>
+                    <?php if (isset($_SESSION['user_id'])) { ?>
+                    <input 
+                        type="checkbox"
+                        name="latest_dl"
+                        id="latest_dl"
+                        <?= !isset($_GET['id']) || isset($_GET['latest_dl']) ? 'checked' : '' ?>
+                    >
+                    <label for="latest_dl">前回保存した画像以降を取得</label><br>
+                    <?php } ?>
+                    <input
+                        type="checkbox"
+                        name="using_term"
+                        id="using_term"
+                        <?= isset($_GET['using_term']) ? 'checked' : '' ?>
+                    >
+                    <label for="using_term">期間指定を行う</label>
                     <input 
                         type="datetime-local" 
                         name="st_time" 
@@ -175,7 +272,7 @@ $canonical = "https://imagedler.com/";
                         min="<?= $minTime ?>" 
                         required
                     >
-                    から<br>
+                    から<br class="br">
                     <input 
                         type="datetime-local" 
                         name="ed_time" 
@@ -188,42 +285,53 @@ $canonical = "https://imagedler.com/";
         </dl>      
         <input type="submit" value="送信">
     </form>
-    <?php if (isset($likes)) { ?>
-    <h2>いいねした画像一覧</h2>
-    <p><?= count($likes) ?>個のツイートが取得されました。</p>
-    <div class="download_area">
-        <p>[保存]ボタンを押すと、ダウンロードフォルダにZipファイルで保存されます。</p>
-        <form action="./index.php?st_time=<?= h($_GET['st_time']) ?>&ed_time=<?= h($_GET['ed_time']) ?>&id=<?= h($_GET['id']) ?>" method="POST">
-        <input type="submit" name="download" value="保存">
-        </form>
-    </div>
-    <table>
-        <tbody>
-        <tr>
-            <th>ツイート時間</th>
-            <th>ツイート者</th>
-            <th>ツイート内容</th>
-            <th>ツイート画像</th>
-        </tr>
-        <?php foreach($likes as $l) { ?>
-            <tr>
-            <td><?= $l['post_time'] ?></td>
-            <td><?= $l['user'] ?></td>
-            <td><?= $l['text'] ?></td>
-            <td>
-                <?php foreach($l['images'] as $i) { ?>
+</div>
+<?php if (isset($likes)) { ?>
+<p><?= count($likes) ?>件のツイートが取得されました。</p>
+<div class="download_area">
+    <p>[保存]ボタンを押すと、ダウンロードフォルダにZipファイルで保存されます。</p>
+    <form action="./index.php?<?= $action ?>" method="POST">
+    <input type="submit" name="download" value="保存">
+    </form>
+</div>
+<ul class="likes_list">
+    <?php foreach($likes as $l) { ?>
+        <li>
+            <p class="user_name"><?= $l['user'] ?></p>
+            <p><?= $l['post_time'] ?></p>
+            <p class="tweet_content"><?= $l['text'] ?></p>
+            <?php foreach($l['images'] as $i) { ?>
                 <img src="<?= $i ?>" alt="">
-                <?php } ?>
-                <p>
-                    ツイート元リンク:
-                    <a href="<?= $l['url'] ?>" target="_blank" rel="noopener noreferrer"><?= $l['url'] ?></a>
-                </p>
-            </td>
-            </tr>
+            <?php } ?>
+            <p>
+                ツイート元リンク:
+                <a href="<?= $l['url'] ?>" target="_blank" rel="noopener noreferrer"><?= $l['url'] ?></a>
+            </p>
+        </li>
+        <?php } 
+    } ?>
+</ul>
+<section id="caution">
+    <h3>注意事項</h3>
+    <p>画像の数が多いほど、ダウンロードに時間がかかります(画像数x1秒が目安)。また、画像数が多すぎると、ダウンロードできない場合があります。</p>
+    <p>期間指定で遡れる範囲は最大1カ月前までです。</p>
+    <p>ご要望・質問等ございましたら、<a href="<?= $home ?>mail/">こちらのフォーム</a>よりお願いします。</p>
+</section>
+<section id="versions">
+    <h3>更新履歴</h3>
+    <small>スクロールできます</small>
+    <dl class="form_list">
+        <?php foreach ($versions_log as $v) { ?>
+            <div>
+                <dt><?= $v['date'] ?></dt>
+                <dd>
+                    <p class="version">Ver. <?= $v['version'] ?></p>
+                    <p><?= $v['content'] ?></p>
+                </dd>
+            </div>
         <?php } ?>
-        </tbody>
-    </table>
-    <?php } ?>
+    </dl>
+</section>
 </main>
 <?php include($home . '../footer.php') ?>
 <script src="<?= $home ?>../script.js"></script>

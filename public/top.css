@@ -5,11 +5,11 @@
     注意事項
 
 --------------------*/
-.caution {
-    margin: 1.5rem 0;
+#caution {
+    margin: 6em 0 4em;
 }
 
-.caution p {
+#caution p {
     font-size: 14px;
     margin: 4px 0;
 }
@@ -21,4 +21,87 @@
 --------------------*/
 .download_area {
     margin: 2em auto;
+}
+
+/*--------------------
+
+	取得ツイート一覧
+
+--------------------*/
+.likes_list {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    margin: 0;
+    padding: 0;
+}
+
+.likes_list li {
+    list-style: none;
+    width: 32%;
+    margin: 1em auto;
+}
+
+.likes_list li p {
+    margin: 0;
+}
+.likes_list li p.user_name {
+    font-weight: bold;
+}
+.likes_list li p.tweet_content {
+    height: 48px;
+    overflow: auto;
+}
+
+.likes_list img {
+    max-width: 160px;
+    max-height: 160px;
+    object-fit: cover;
+    display: inline-block;
+}
+
+.likes_table {
+    text-align: center;
+}
+
+.likes_table tr {
+    display: table-row;
+    margin:  2em 0;
+    padding: 1em 0;
+    border-bottom: 2px solid black;
+}
+
+.likes_table th, 
+.likes_table td {
+    padding: 0 8px;
+}
+
+.likes_table img {
+    max-width: 160px;
+    max-height: 160px;
+    object-fit: cover;
+    display: inline-block;
+}
+
+/*--------------------
+
+	更新履歴
+
+--------------------*/
+#versions h3 {
+    margin: 0;
+}
+
+#versions dl {
+    height: 200px;
+    overflow: auto;
+}
+
+#versions dl > div {
+    border-bottom: 1px solid #444;
+}
+
+#versions dt,
+#versions dd {
+    margin: 0.5em auto;
 }
