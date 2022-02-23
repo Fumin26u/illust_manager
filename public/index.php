@@ -227,6 +227,10 @@ $canonical = "https://imagedler.com/";
 <main>
     <h2>検索フォーム</h2>
     <p>以下の入力欄に取得したいユーザーのTwitter ID(@以降の文字)と、いつまでの投稿を取得したいかを期間指定してください。(全て必須入力)</p>
+    <small>
+        使用する前に、<a href="<?= $home ?>t/terms_of_use">利用規約</a>と<a href="<?= $home ?>t/privacy_policy">プライバシーポリシー</a>の確認をお願いします。<br>
+        [送信]ボタンを押した(またはユーザー登録を行った)時点で、利用規約とプライバシーポリシーに同意したとみなします。
+    </small>
     <?php // <small>数値のTwitter IDは、<a href="https://idtwi.com/" target="_blank" rel="noopener noreferrer">idtwi</a>などから検索できます。</small> ?>
     <form action="<?= h($_SERVER['PHP_SELF']) ?>" method="GET">
         <dl class="form_list">
@@ -237,7 +241,7 @@ $canonical = "https://imagedler.com/";
                 </dd>
             </div>
             <div>
-                <dt>取得ツイート数(最大400)</dt>
+                <dt>取得ツイート数<br>(最大400)</dt>
                 <dd>
                     <input type="number" name="count" value="<?= isset($_GET['count']) ? h($_GET['count']) : '100' ?>" max="400" min="1" required>
                 </dd>
