@@ -228,7 +228,7 @@ $canonical = "https://imagedler.com/";
     <h2>検索フォーム</h2>
     <p>以下の入力欄に取得したいユーザーのTwitter ID(@以降の文字)と、いつまでの投稿を取得したいかを期間指定してください。(全て必須入力)</p>
     <small>
-        使用する前に、<a href="<?= $home ?>t/terms_of_use">利用規約</a>と<a href="<?= $home ?>t/privacy_policy">プライバシーポリシー</a>の確認をお願いします。<br>
+        使用する前に、<a href="<?= $home ?>t/terms_of_use.php">利用規約</a>と<a href="<?= $home ?>t/privacy_policy.php">プライバシーポリシー</a>の確認をお願いします。<br>
         [送信]ボタンを押した(またはユーザー登録を行った)時点で、利用規約とプライバシーポリシーに同意したとみなします。
     </small>
     <?php // <small>数値のTwitter IDは、<a href="https://idtwi.com/" target="_blank" rel="noopener noreferrer">idtwi</a>などから検索できます。</small> ?>

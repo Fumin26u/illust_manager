@@ -18,7 +18,7 @@
                 <a href="<?= $home ?>t/terms_of_use.php">利用規約</a>
             </li>
             <li>
-                <a href="<?= $home ?>t/privacy_policy">プライバシーポリシー</a>
+                <a href="<?= $home ?>t/privacy_policy.php">プライバシーポリシー</a>
             </li>
         </ul>
     </div>
