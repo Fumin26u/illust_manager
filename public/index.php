@@ -245,6 +245,7 @@ $canonical = "https://imagedler.com/";
             <div>
                 <dt>詳細設定</dt>
                 <dd>
+                    <?php if (isset($_SESSION['user_id'])) { ?>
                     <input 
                         type="checkbox"
                         name="latest_dl"
@@ -252,6 +253,7 @@ $canonical = "https://imagedler.com/";
                         <?= !isset($_GET['id']) || isset($_GET['latest_dl']) ? 'checked' : '' ?>
                     >
                     <label for="latest_dl">前回保存した画像以降を取得</label><br>
+                    <?php } ?>
                     <input
                         type="checkbox"
                         name="using_term"
@@ -313,12 +315,13 @@ $canonical = "https://imagedler.com/";
 </section>
 <section id="versions">
     <h3>更新履歴</h3>
+    <small>スクロールできます</small>
     <dl class="form_list">
         <?php foreach ($versions_log as $v) { ?>
             <div>
                 <dt><?= $v['date'] ?></dt>
                 <dd>
-                    <p class="version"><?= $v['version'] ?></p>
+                    <p class="version">Ver. <?= $v['version'] ?></p>
                     <p><?= $v['content'] ?></p>
                 </dd>
             </div>

@@ -82,3 +82,26 @@
     object-fit: cover;
     display: inline-block;
 }
+
+/*--------------------
+
+	更新履歴
+
+--------------------*/
+#versions h3 {
+    margin: 0;
+}
+
+#versions dl {
+    height: 200px;
+    overflow: auto;
+}
+
+#versions dl > div {
+    border-bottom: 1px solid #444;
+}
+
+#versions dt,
+#versions dd {
+    margin: 0.5em auto;
+}
