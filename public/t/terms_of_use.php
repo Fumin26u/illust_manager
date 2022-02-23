@@ -30,7 +30,7 @@ $canonical = "https://imagedler.com/t/terms_of_use.php";
 <?php include_once($home . '../header.php') ?>
 <main>
 <h2>利用規約</h2>
-<p>この利用規約（以下、「本規約」といいます。）は、LikedImageDLerの管理人がこのウェブサイト上で提供するサービス（以下、「本サービス」といいます。）の利用条件を定めるものです。登録ユーザーの皆さま（以下、「ユーザー」といいます。）には、本規約に従って、本サービスをご利用いただきます。</p>
+<p>この利用規約（以下、「本規約」といいます。）は、TwimageDLerの管理人がこのウェブサイト上で提供するサービス（以下、「本サービス」といいます。）の利用条件を定めるものです。登録ユーザーの皆さま（以下、「ユーザー」といいます。）には、本規約に従って、本サービスをご利用いただきます。</p>
 <div class="tou_content">
     <div>
         <h3>第1条（適用）</h3>
@@ -153,3 +153,4 @@ $canonical = "https://imagedler.com/t/terms_of_use.php";
 </main>
 <?php include_once($home . '../footer.php') ?>
 </body>
+</html>
