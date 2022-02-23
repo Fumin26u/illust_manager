@@ -1,4 +1,11 @@
 <?php
+/*--------------------------------------------------------------------------------
+
+[※利用規約とプライバシーポリシーについて]
+金銭に関わる項目は消去してあるため、有料サービスの開発の際は再度挿入すること
+
+--------------------------------------------------------------------------------*/
+
 $home = './';
 
 require($home . '../apiset.php');
@@ -220,6 +227,10 @@ $canonical = "https://imagedler.com/";
 <main>
     <h2>検索フォーム</h2>
     <p>以下の入力欄に取得したいユーザーのTwitter ID(@以降の文字)と、いつまでの投稿を取得したいかを期間指定してください。(全て必須入力)</p>
+    <small>
+        使用する前に、<a href="<?= $home ?>t/terms_of_use">利用規約</a>と<a href="<?= $home ?>t/privacy_policy">プライバシーポリシー</a>の確認をお願いします。<br>
+        [送信]ボタンを押した(またはユーザー登録を行った)時点で、利用規約とプライバシーポリシーに同意したとみなします。
+    </small>
     <?php // <small>数値のTwitter IDは、<a href="https://idtwi.com/" target="_blank" rel="noopener noreferrer">idtwi</a>などから検索できます。</small> ?>
     <form action="<?= h($_SERVER['PHP_SELF']) ?>" method="GET">
         <dl class="form_list">
@@ -230,7 +241,7 @@ $canonical = "https://imagedler.com/";
                 </dd>
             </div>
             <div>
-                <dt>取得ツイート数(最大400)</dt>
+                <dt>取得ツイート数<br>(最大400)</dt>
                 <dd>
                     <input type="number" name="count" value="<?= isset($_GET['count']) ? h($_GET['count']) : '100' ?>" max="400" min="1" required>
                 </dd>
@@ -238,6 +249,7 @@ $canonical = "https://imagedler.com/";
             <div>
                 <dt>詳細設定</dt>
                 <dd>
+                    <?php if (isset($_SESSION['user_id'])) { ?>
                     <input 
                         type="checkbox"
                         name="latest_dl"
@@ -245,6 +257,7 @@ $canonical = "https://imagedler.com/";
                         <?= !isset($_GET['id']) || isset($_GET['latest_dl']) ? 'checked' : '' ?>
                     >
                     <label for="latest_dl">前回保存した画像以降を取得</label><br>
+                    <?php } ?>
                     <input
                         type="checkbox"
                         name="using_term"
@@ -306,12 +319,13 @@ $canonical = "https://imagedler.com/";
 </section>
 <section id="versions">
     <h3>更新履歴</h3>
+    <small>スクロールできます</small>
     <dl class="form_list">
         <?php foreach ($versions_log as $v) { ?>
             <div>
                 <dt><?= $v['date'] ?></dt>
                 <dd>
-                    <p class="version"><?= $v['version'] ?></p>
+                    <p class="version">Ver. <?= $v['version'] ?></p>
                     <p><?= $v['content'] ?></p>
                 </dd>
             </div>

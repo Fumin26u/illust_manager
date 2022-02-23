@@ -21,6 +21,7 @@ main {
     margin: 0 auto;
     padding: 2em;
     max-width: 1280px;
+    min-height: 640px;
     background: white;
 }
 
@@ -163,6 +164,58 @@ header .logout_form {
     フッター
 
 --------------------*/
+footer {
+    background: #555;
+    box-shadow: -2px -2px 2px #ccc;
+    color: white;
+}
+
+.footer_container {
+    max-width: 1296px;
+    margin: 0 auto;
+    box-sizing: border-box;
+    display: flex;
+    padding: 2em 0;
+    justify-content: space-between;
+    align-items: center;
+}
+
+footer .footer_left a {
+    color: white;
+    text-decoration: none;
+    display: inline-block;
+    vertical-align: middle;
+}
+footer .footer_left .title {
+    font-size: 24px;
+}
+footer .footer_left p {
+    font-size: 14px;
+    font-weight: normal;
+    margin: 0 auto;
+}
+
+footer .link_area li {
+    list-style: none;
+    display: inline-block;
+    vertical-align: middle;
+    margin: 0 8px;
+    padding: 0 8px;
+}
+footer .link_area li a {
+    text-decoration: none;
+    color: white;
+
+}
+footer .link_area li a:hover {
+    text-decoration: underline;
+}
+
+.copyright {
+    background-color: #222;
+    text-align: center;
+    color: white;
+}
 
 /*--------------------
 
