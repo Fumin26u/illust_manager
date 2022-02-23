@@ -1,5 +1,7 @@
 <?php
 $home = '../';
+require_once($home . '../commonlib.php');
+
 $title = 'プライバシーポリシー | LikedImageDLer';
 
 // デスクリプション

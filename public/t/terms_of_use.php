@@ -1,5 +1,7 @@
 <?php
 $home = '../';
+require_once($home . '../commonlib.php');
+
 $title = '利用規約 | LikedImageDLer';
 
 // デスクリプション
