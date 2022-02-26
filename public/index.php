@@ -11,6 +11,9 @@ $home = './';
 require($home . '../apiset.php');
 require('versions.php');
 
+// ログインしているかどうか
+$is_login = isset($_SESSION['user_id']) ? true : false;
+
 // URL引数idが空だった場合、初期表示にする
 if (isset($_GET['id']) && $_GET['id'] == '') {
     header('./', true, 303);
@@ -226,7 +229,7 @@ $canonical = "https://imagedler.com/";
 <?php include_once($home . '../header.php') ?>
 <main>
     <h2>検索フォーム</h2>
-    <p>以下の入力欄に取得したいユーザーのTwitter ID(@以降の文字)と、いつまでの投稿を取得したいかを期間指定してください。(全て必須入力)</p>
+    <p>以下の入力欄に取得したいユーザーのTwitter ID(@以降)・取得するツイート数を入力してください。(<em>*</em>は必須入力)</p>
     <small>
         使用する前に、<a href="<?= $home ?>t/terms_of_use.php">利用規約</a>と<a href="<?= $home ?>t/privacy_policy.php">プライバシーポリシー</a>の確認をお願いします。<br>
         [送信]ボタンを押した(またはユーザー登録を行った)時点で、利用規約とプライバシーポリシーに同意したとみなします。
@@ -235,13 +238,13 @@ $canonical = "https://imagedler.com/";
     <form action="<?= h($_SERVER['PHP_SELF']) ?>" method="GET">
         <dl class="form_list">
             <div>
-                <dt>Twitter ID</dt>
+                <dt>Twitter ID<em>*</em></dt>
                 <dd>
                     <input type="text" name="id" value="<?= isset($_GET['id']) ? h($_GET['id']) : '' ?>" required>
                 </dd>
             </div>
             <div>
-                <dt>取得ツイート数<br>(最大400)</dt>
+                <dt>取得ツイート数<em>*</em><br>(最大400)</dt>
                 <dd>
                     <input type="number" name="count" value="<?= isset($_GET['count']) ? h($_GET['count']) : '100' ?>" max="400" min="1" required>
                 </dd>
@@ -249,7 +252,7 @@ $canonical = "https://imagedler.com/";
             <div>
                 <dt>詳細設定</dt>
                 <dd>
-                    <?php if (isset($_SESSION['user_id'])) { ?>
+                    <?php if ($is_login) { ?>
                     <input 
                         type="checkbox"
                         name="latest_dl"
@@ -262,7 +265,7 @@ $canonical = "https://imagedler.com/";
                         type="checkbox"
                         name="using_term"
                         id="using_term"
-                        <?= isset($_GET['using_term']) ? 'checked' : '' ?>
+                        <?= !$is_login || isset($_GET['using_term']) ? 'checked' : '' ?>
                     >
                     <label for="using_term">期間指定を行う</label>
                     <input 
@@ -270,14 +273,14 @@ $canonical = "https://imagedler.com/";
                         name="st_time" 
                         value="<?= isset($st_time) ? $st_time : '' ?>" 
                         min="<?= $minTime ?>" 
-                        required
+                        <?= !$is_login ? ' required' : '' ?>
                     >
                     から<br class="br">
                     <input 
                         type="datetime-local" 
                         name="ed_time" 
                         value="<?= isset($_GET['ed_time']) ? h($_GET['ed_time']) : $nowTime ?>" 
-                        required
+                        <?= !$is_login ? ' required' : '' ?>
                     >
                     まで
                 </dd>
