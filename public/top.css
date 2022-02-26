@@ -38,8 +38,22 @@
 
 .likes_list li {
     list-style: none;
-    width: 32%;
+    width: 100%;
     margin: 1em auto;
+}
+
+@media (min-width: 600px) {
+    .likes_list li {
+        list-style: none;
+        width: 48%;
+    }
+}
+
+@media (min-width: 800px) {
+    .likes_list li {
+        list-style: none;
+        width: 32%;
+    }
 }
 
 .likes_list li p {

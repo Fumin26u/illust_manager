@@ -19,10 +19,15 @@ body {
 
 main {
     margin: 0 auto;
-    padding: 2em;
+    padding: 2em 8px;
     max-width: 1280px;
     min-height: 640px;
     background: white;
+}
+@media (min-width: 800px) {
+    main {
+        padding: 2em;
+    }
 }
 
 h3 {
@@ -126,7 +131,7 @@ header {
     margin: 0 auto;
     box-sizing: border-box;
     display: flex;
-    padding: 8px 0;
+    padding: 8px;
     justify-content: space-between;
 }
 
@@ -147,10 +152,15 @@ header .header_left h1 {
 }
 
 header .header_left .link_area {
-    display: inline-block;
+    display: none;
     vertical-align: middle;
     font-size: 18px;
     margin: 0 1em;
+}
+@media (min-width: 1000px) {
+    header .header_left .link_area {
+        display: inline-block;
+    }
 }
 header .header_left .link_area a {
     color: royalblue;
@@ -179,18 +189,27 @@ footer {
     max-width: 1296px;
     margin: 0 auto;
     box-sizing: border-box;
-    display: flex;
-    padding: 2em 0;
-    justify-content: space-between;
-    align-items: center;
+    padding: 2em 8px;
 }
 
 footer .footer_left a {
+    text-align: center;
     color: white;
     text-decoration: none;
-    display: inline-block;
-    vertical-align: middle;
 }
+
+@media (min-width: 800px) {
+    .footer_container {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    footer .footer_left a {
+        text-align: left;
+    }
+}
+
 footer .footer_left .title {
     font-size: 24px;
 }
@@ -202,15 +221,23 @@ footer .footer_left p {
 
 footer .link_area li {
     list-style: none;
-    display: inline-block;
-    vertical-align: middle;
-    margin: 0 8px;
+    text-align: center;
+    margin: 1em 8px;
     padding: 0 8px;
 }
+
+@media (min-width: 800px) {
+    footer .link_area li {
+        margin: 0 8px;
+        display: inline-block;
+        vertical-align: middle;
+    }
+}
+
 footer .link_area li a {
     text-decoration: none;
     color: white;
-
+    font-size: 18px;
 }
 footer .link_area li a:hover {
     text-decoration: underline;
