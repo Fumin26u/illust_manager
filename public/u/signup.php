@@ -55,7 +55,6 @@ SQL;
             $msg[] = '登録しました。';
             $is_submitted = true;
         }
- 
     }
 
     // URL引数tが設定されていないまたは空の場合false

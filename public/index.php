@@ -120,7 +120,7 @@ SQL;
             // ツイートIDは数値だが、桁数が12以上なのでVARCHAR型で保存
             $st->bindValue(':post_id', h($likes[0]['post_id']), PDO::PARAM_STR);
             $st->execute();
-
+            
             $pdo->commit();   
 
         } catch (PDOException $e) {

@@ -16,7 +16,7 @@
         <a href="<?= $home ?>u/p-signup.php" id="signup" class="c-btn">登録</a>
         <?php } else { ?>
             <span class="user_name"><?= h($_SESSION['user_name']) ?>さん</span>
-            <!-- <a href="u/profile" class="c-btn">アカウント情報</a> -->
+            <a href="u/profile.php" class="c-btn">アカウント情報</a>
             <form action="<?= h($_SERVER['PHP_SELF']) ?>" method="GET" class="logout_form">
                 <input type="submit" name="logout" id="logout" class="c-btn" value="ログアウト">
             </form>
