@@ -1,1 +1,39 @@
 @import url('../style.css');
+
+.profile .form_list {
+    max-width: 1000px;
+}
+
+.profile .form_list div {
+    margin: 1em 0;
+    border-bottom: 1px solid black;
+}
+
+.profile .form_list dt, 
+.profile .form_list dd {
+    margin: 4px 0;
+}
+
+.profile .form_list dt {
+    font-weight: bold;
+}
+
+@media (min-width: 750px) {
+    .profile .form_list div {
+        margin: 0;
+    }
+    
+    .profile .form_list dt, 
+    .profile .form_list dd {
+        margin: 1em 0;
+    }
+
+    .form_list dt {
+        width: 20%;
+    }
+    .form_list dd {
+        width: 72%;
+        padding-left: 16px;
+    }
+}
+

@@ -57,5 +57,5 @@ if (!isset($login)) {
 // ログアウト処理
 if(isset($_GET['logout'])) {
     $_SESSION = [];
-    header('location: ./', true, 303);
+    header('location: ' . $home, true, 303);
 }

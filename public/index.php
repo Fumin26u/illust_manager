@@ -141,6 +141,49 @@ SQL;
     // 画像をダウンロード
     require_once($home . '../dlImages.php');
     dlImages($images);
+
+    // ログインしている場合、DL回数と保存した画像の総数を更新
+    if (isset($user_id, $user_name)) {
+        try {
+
+            $pdo = dbConnect();
+            $imc = count($images);
+
+            $st = $pdo->prepare('SELECT dl_count, images_count FROM user WHERE user_id = :user_id');
+            $st->bindValue(':user_id', $user_id, PDO::PARAM_INT);
+            $st->execute();
+            $rows = $st->fetch(PDO::FETCH_ASSOC);
+            v($rows);
+            // DLした回数
+            $dl_count = is_null($rows['dl_count']) ? 0 : $rows['dl_count']; 
+            // 保存した画像の総数
+            $images_count = is_null($rows['images_count']) ? 0 : $rows['images_count'];
+            // カウンタを増加
+            $dl_count += 1;
+            $images_count += $imc;
+
+            $pdo->beginTransaction();
+            $sql = <<<SQL
+UPDATE user SET 
+dl_count = :dl_count,
+images_count = :images_count
+WHERE user_id = :user_id
+SQL;
+            $st = $pdo->prepare($sql);
+            $st->bindValue(':dl_count', $dl_count, PDO::PARAM_INT);
+            $st->bindValue(':images_count', $images_count, PDO::PARAM_INT);
+            $st->bindValue(':user_id', $user_id, PDO::PARAM_INT);
+            $st->execute();
+
+            $pdo->commit();
+
+        } catch (PDOException $e) {
+            echo 'データベース接続に失敗しました';
+            if (DEBUG) {
+                echo $e;
+            }
+        }
+    }
 }
 
 // ログインしている場合、期間指定の開始時刻の読み込みを行う
@@ -337,6 +380,5 @@ $canonical = "https://imagedler.com/";
 </section>
 </main>
 <?php include($home . '../footer.php') ?>
-<script src="<?= $home ?>../script.js"></script>
 </body>
 </html>

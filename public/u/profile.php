@@ -112,7 +112,7 @@ $canonical = "https://imagedler.com/u/profile.php";
 <meta property="og:title" content="<?= $title ?>">
 <meta property="og:image" content="<?= $home ?>ogpimage.png">
 </head>
-<body>
+<body class="profile">
 <?php include_once($home . '../header.php') ?>
 <main>
     <h2><?= $user_info['user_name']['value'] ?>さんのユーザー情報</h2>
