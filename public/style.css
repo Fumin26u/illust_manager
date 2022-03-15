@@ -18,6 +18,7 @@ body {
 }
 
 main {
+    position: relative;
     margin: 0 auto;
     padding: 2em 8px;
     max-width: 1280px;
@@ -172,6 +173,119 @@ header .header_left .link_area a:hover {
 
 header .logout_form {
     display: inline-block;
+}
+
+/*--------------------
+
+    ハンバーガーメニュー
+
+--------------------*/
+header #wide {
+    display: none;
+}
+@media (min-width: 750px) {
+    header #wide {
+        display: block;
+    }
+}
+
+#hamburger {
+    position: relative;
+    display: block;
+    width: 48px;
+}
+@media (min-width: 750px) {
+    #hamburger {
+        display: none;
+        cursor: pointer;
+    }
+}
+
+#hamburger .bar_area {
+    vertical-align: middle;
+    height: 36px;
+    width: 36px;
+    margin: auto;
+    margin-top: 12px;
+}
+#hamburger .bar_area .bar {
+    background: #222;
+    width: 36px;
+    height: 3px;
+    margin: 0 auto;
+    position: absolute;
+    display: block;
+    border-radius: 3px 3px;
+    transition: all .3s;
+}
+#hamburger .bar_area .bar:nth-child(1) {
+    top: 0;
+}
+#hamburger .bar_area .bar:nth-child(2) {
+    top: 48%;
+}
+#hamburger .bar_area .bar:nth-child(3) {
+    bottom: 0;
+}
+#hamburger.on .bar_area .bar:nth-child(1) {
+    transform: rotate(45deg);
+    top: 50%;
+}
+#hamburger.on .bar_area .bar:nth-child(2) {
+    opacity: 0;
+}
+#hamburger.on .bar_area .bar:nth-child(3) {
+    transform: rotate(-45deg);
+    top: 50%;
+}
+
+#hamburger .content {
+    z-index: 9999;
+    position: fixed;
+    padding: 10px 40px;
+    width: 240px;
+    top: 75px;
+    right: -100%;
+    opacity: 0;
+    background: #f5f5f5;
+    transition: all .3s;
+    overflow: visible;
+}
+
+#hamburger .content > * {
+    padding: 24px 0 12px;
+    text-align: center;
+    border-bottom: 1px solid #222;
+    display: block;
+}
+#hamburger .content .user_name {
+    text-align: left;
+    font-weight: bold;
+    font-size: 20px;
+}
+#hamburger .content a,
+#hamburger .content label {
+    text-decoration: none;
+    color: black;
+    font-size: 18px;
+}
+#hamburger .content label,
+#hamburger .content #login,
+#hamburger .content #signup {
+    font-weight: bold;
+}
+#hamburger .content label,
+#hamburger .content #login {
+    color: royalblue;
+}
+#hamburger .content input {
+    display: none;
+}
+
+#hamburger.on .content {
+    display: block;
+    opacity: 1;
+    right: 0;
 }
 
 /*--------------------
