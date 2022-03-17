@@ -25,4 +25,4 @@
 </div>
 </footer>
 <p class="copyright">&copy;2022 TwimageDLer</p>
-<script src="<?= $home ?>../script.js"></script>
+<script src="<?= $home ?>script.js"></script>
