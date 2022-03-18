@@ -1,3 +1,10 @@
+apikey.php 
+gtag.inc
+system-conf.php 
+twimagedler.sql 
+composer.json
+vendor/*
+
 ##### Windows
 # Windows thumbnail cache files
 Thumbs.db
