@@ -75,7 +75,7 @@ SQL;
     $st->bindValue(':user_id', $user_id, PDO::PARAM_INT);
     $st->execute();
     $row = $st->fetch(PDO::FETCH_ASSOC);
-    $rows['latest_time'] = $row !== false ? $row[0] : 'まだ利用していません。';
+    $rows['latest_time'] = $row !== false ? $row['latest_time'] : 'まだ利用していません。';
 
     // ユーザー情報に挿入
     foreach ($user_info as $k => $u) {
