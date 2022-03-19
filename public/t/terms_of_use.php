@@ -16,7 +16,7 @@ $canonical = "https://imagedler.com/t/terms_of_use.php";
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title><?= $title ?></title>
-<?php include_once $home . '../../gtag.inc'; ?>
+<?php include_once $home . '../gtag.inc'; ?>
 <link rel="stylesheet" href="t.css">
 <link rel="icon" href="<?= $home ?>favicon.png">
 <link rel="canonical" href="<?= $canonical ?>">

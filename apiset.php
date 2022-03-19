@@ -1,13 +1,13 @@
 <?php
 require_once('commonlib.php');
-require_once($home . "../../vendor/autoload.php");
+require_once($home . "../vendor/autoload.php");
 use Abraham\TwitterOAuth\TwitterOAuth;
 
 // APIキー、トークンの設定
 function getTweets($id, $count, $latest_dl, $using_term, $st_time = false, $ed_time = false) {
 
     // APIキーとトークン
-    include_once('../../apikey.php');
+    include_once('../apikey.php');
 
     // APIキーとトークンを用いてTwitterOAuthに接続
     $connection = new TwitterOAuth($API_KEY, $API_KEY_SECRET, $ACCESS_TOKEN, $ACCESS_TOKEN_SECRET);

@@ -47,10 +47,8 @@ try {
 
     // 表示するユーザーデータを読み込む
     $sql = <<<SQL
-SELECT user_name, email, created_at, premium, dl_count, images_count, used_time.latest_time FROM user
-INNER JOIN used_time ON used_time.user_id = user.user_id
+SELECT user_name, email, created_at, premium, dl_count, images_count FROM user
 WHERE user.user_id = :user_id 
-AND used_time.sns_type = 'T' 
 SQL;
     $st = $pdo->prepare($sql);
     $st->bindValue(':user_id', $user_id, PDO::PARAM_INT);
@@ -71,6 +69,13 @@ SQL;
     // 日付関連の置き換え
     // $rows['created_at'] = date('Y年m月d日 h時i分', $rows['created_at']);
     // $rows['latest_time'] = date('Y年m月d日 h時i分', $rows['latest_time']);
+
+    // 最終利用時刻を読み込む
+    $st = $pdo->prepare('SELECT latest_time FROM used_time WHERE user_id = :user_id');
+    $st->bindValue(':user_id', $user_id, PDO::PARAM_INT);
+    $st->execute();
+    $row = $st->fetch(PDO::FETCH_ASSOC);
+    $rows['latest_time'] = $row !== false ? $row[0] : 'まだ利用していません。';
 
     // ユーザー情報に挿入
     foreach ($user_info as $k => $u) {
@@ -100,7 +105,7 @@ $canonical = "https://imagedler.com/u/profile.php";
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title><?= $title ?></title>
-<?php include_once $home . '../../gtag.inc'; ?>
+<?php include_once $home . '../gtag.inc'; ?>
 <link rel="stylesheet" href="signup.css">
 <link rel="icon" href="<?= $home ?>favicon.png">
 <link rel="canonical" href="<?= $canonical ?>">
