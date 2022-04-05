@@ -4,7 +4,7 @@ system-conf.php
 twimagedler.sql 
 composer.json
 vendor/*
-task_test/*
+reference/*
 
 ##### Windows
 # Windows thumbnail cache files
