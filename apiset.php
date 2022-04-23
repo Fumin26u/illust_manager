@@ -87,6 +87,7 @@ function getTweets($id, $count, $latest_dl, $object, $using_term, $st_time = fal
                 if (strpos($l->text, 'RT @') !== false) continue;
                 
                 // そのツイートの投稿日時が1つ前のツイートより早い場合、キューへの挿入を終了
+                // echo $posted_date . ' / ' . date('Y-m-d H:i:s', strtotime((string) $l->created_at)) . '<br>';
                 if ($posted_date !== '' && $posted_date < date('Y-m-d H:i:s', strtotime((string) $l->created_at))) break 2;
             }
 

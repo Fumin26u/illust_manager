@@ -219,17 +219,7 @@ $nowTime = $today . 'T' . $now;
 // 遡れる最低年月日
 $m = new DateTime();
 $minDay = $m->modify("-1 months")->format('Y-m-d'); 
-$minTime = $minDay . 'T' . $now;
-
-// DLフォームのaction値の設定
-$action = '';
-if (isset($_GET['id'])) {
-    $action .= 'id=' . h($_GET['id']) . '&count=' . h($_GET['count']);
-    $action .= isset($_GET['latest_dl']) ?  '&latest_dl=on' : '';
-    $action .= isset($_GET['using_term']) ?  '&using_term=on' : '';
-    $action .= isset($_GET['st_time']) ?  '&st_time=' . h($_GET['st_time']) : '';
-    $action .= isset($_GET['ed_time']) ?  '&ed_time=' . h($_GET['ed_time']) : '';
-}
+// $minTime = $minDay . 'T' . $now;
 
 // echo('<pre>');
 // v($likes);
@@ -286,7 +276,7 @@ $canonical = "https://imagedler.com/";
             <div>
                 <dt>取得ツイート数<em>*</em><br>(最大400)</dt>
                 <dd>
-                    <input type="number" name="count" value="<?= isset($_GET['count']) ? h($_GET['count']) : '100' ?>" max="400" min="1" required>
+                    <input type="number" name="count" value="<?= isset($_GET['count']) ? h($_GET['count']) : '100' ?>" max="" min="1" required>
                 </dd>
             </div>
             <div>
@@ -333,7 +323,7 @@ $canonical = "https://imagedler.com/";
 <p><?= count($likes) ?>件のツイートが取得されました。</p>
 <div class="download_area">
     <p>[保存]ボタンを押すと、ダウンロードフォルダにZipファイルで保存されます。</p>
-    <form action="./index.php?<?= $action ?>" method="POST">
+    <form action="" method="POST">
     <input type="submit" name="download" value="保存">
     </form>
 </div>
