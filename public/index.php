@@ -1,5 +1,6 @@
 <?php
 $home = './';
+// declare(strict_types = 1);
 
 require($home . '../apiset.php');
 require('versions.php');
@@ -19,6 +20,7 @@ if (isset($_GET['id'])) {
     $count = h($_GET['count']);
 
     $latest_dl = false;
+
     // 「前回保存した画像移行を取得」にチェックが入っている場合
     if (isset($_GET['latest_dl'])) {
         $pdo = dbConnect();
@@ -33,9 +35,9 @@ if (isset($_GET['id'])) {
 
     // ツイートの取得処理(期間指定ありなしで変化)
     if (isset($_GET['using_term'])) {
-        $likes = getTweets($_GET['id'], $count, $latest_dl, true, $_GET['st_time'], $_GET['ed_time']);
+        $likes = getTweets($_GET['id'], $count, $latest_dl, $_GET['object'], true, $_GET['st_time'], $_GET['ed_time']);
     } else {
-        $likes = getTweets($_GET['id'], $count, $latest_dl, false);
+        $likes = getTweets($_GET['id'], $count, $latest_dl, $_GET['object'], false);
     }
 }
 
@@ -276,7 +278,9 @@ $canonical = "https://imagedler.com/";
             <div>
                 <dt>Twitter ID<em>*</em></dt>
                 <dd>
-                    <input type="text" name="id" value="<?= isset($_GET['id']) ? h($_GET['id']) : '' ?>" required>
+                    <input type="text" name="id" value="<?= isset($_GET['id']) ? h($_GET['id']) : '' ?>" required> の
+                    <input type="radio" name="object" value="likes" id="object_likes" <?= isset($_GET['object']) && $_GET['object'] === 'likes' ? 'checked' : '' ?>><label for="object_likes">いいね一覧を取得する</label> 
+                    <input type="radio" name="object" value="tweets" id="object_tweets" <?= isset($_GET['object']) && $_GET['object'] === 'tweets' ? 'checked' : '' ?>><label for="object_tweets">ツイート一覧を取得する</label> 
                 </dd>
             </div>
             <div>
