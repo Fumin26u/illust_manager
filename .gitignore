@@ -4,6 +4,8 @@ system-conf.php
 twimagedler.sql 
 composer.json
 vendor/*
+reference/*
+phpstan.neon
 
 ##### Windows
 # Windows thumbnail cache files
