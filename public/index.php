@@ -1,5 +1,6 @@
 <?php
 $home = './';
+use Models\ImgList;
 // declare(strict_types = 1);
 
 require($home . '../apiset.php');
