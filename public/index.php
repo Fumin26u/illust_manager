@@ -16,6 +16,7 @@ if (isset($_GET['id']) && $_GET['id'] == '') {
 }
 
 // 送信ボタンが押された場合の処理
+// if (isset($_GET['id'])) $likes = new ImgList($_GET);
 if (isset($_GET['id'])) {
     // 最大画像取得数
     $count = h($_GET['count']);
