@@ -1,4 +1,9 @@
-<?php
+<?php 
+// namespace Database\Connection;
+
+// use \PDO;
+// use \PDOException;
+
 class ConnectDB extends DBInfo {
 	public function __construct() {
 		try {

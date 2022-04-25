@@ -1,6 +1,8 @@
 <?php
 $home = './';
-use Models\ImgList;
+
+use Controllers\ImgList;
+use Controllers\QueryMaking;
 // declare(strict_types = 1);
 
 require($home . '../apiset.php');
@@ -9,14 +11,18 @@ require('versions.php');
 // ログインしているかどうか
 $is_login = isset($_SESSION['user_id']) ? true : false;
 
-// URL引数idが空だった場合、初期表示にする
-if (isset($_GET['id']) && $_GET['id'] == '') {
-    header('./', true, 303);
+// 送信ボタンが押された場合の処理
+if (isset($_GET['id'])) {
+    // $_GETのバリデーション処理
+    $q = new QueryMaking();
+    $query = $q->makeGetTweetsQuery($_GET);
+    v($query);
     exit;
+    $likes = new ImgList($_GET);
+
 }
 
-// 送信ボタンが押された場合の処理
-// if (isset($_GET['id'])) $likes = new ImgList($_GET);
+
 if (isset($_GET['id'])) {
     // 最大画像取得数
     $count = h($_GET['count']);
@@ -271,14 +277,14 @@ $canonical = "https://imagedler.com/";
                 <dt>Twitter ID<em>*</em></dt>
                 <dd>
                     <input type="text" name="id" value="<?= isset($_GET['id']) ? h($_GET['id']) : '' ?>" required> の
-                    <input type="radio" name="object" value="likes" id="object_likes" <?= isset($_GET['object']) && $_GET['object'] === 'likes' ? 'checked' : '' ?>><label for="object_likes">いいね一覧を取得する</label> 
+                    <input type="radio" name="object" value="likes" id="object_likes" <?= (isset($_GET['object']) && $_GET['object'] === 'likes') || empty($_GET) ? 'checked' : '' ?>><label for="object_likes">いいね一覧を取得する</label> 
                     <input type="radio" name="object" value="tweets" id="object_tweets" <?= isset($_GET['object']) && $_GET['object'] === 'tweets' ? 'checked' : '' ?>><label for="object_tweets">ツイート一覧を取得する</label> 
                 </dd>
             </div>
             <div>
-                <dt>取得ツイート数<em>*</em><br>(最大400)</dt>
+                <dt>取得ツイート数<em>*</em><br>(最大500)</dt>
                 <dd>
-                    <input type="number" name="count" value="<?= isset($_GET['count']) ? h($_GET['count']) : '100' ?>" max="" min="1" required>
+                    <input type="number" name="count" value="<?= isset($_GET['count']) ? h($_GET['count']) : '100' ?>" max="500" min="1" required>
                 </dd>
             </div>
             <div>
@@ -300,14 +306,6 @@ $canonical = "https://imagedler.com/";
                         <?= !$is_login || isset($_GET['using_term']) ? 'checked' : '' ?>
                     >
                     <label for="using_term">期間指定を行う</label>
-                    <input 
-                        type="datetime-local" 
-                        name="st_time" 
-                        value="<?= isset($st_time) ? $st_time : '' ?>" 
-                        min="<?= $minTime ?>" 
-                        <?= !$is_login ? ' required' : '' ?>
-                    >
-                    から<br class="br">
                     <input 
                         type="datetime-local" 
                         name="ed_time" 

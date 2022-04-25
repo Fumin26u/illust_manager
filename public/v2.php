@@ -17,7 +17,8 @@ $query = [
     'max_results' => 10,
     'expansions' => 'author_id,entities.mentions.username',
     'tweet.fields' => 'created_at,entities',
-    'user.fields' => 'username'
+    'user.fields' => 'username',
+    'pagination_token' => '7140dibdnow9c7btw481cseys7tc6aovjekz21eqk5elu'
 ];
 
 $id = '1473630539462901761';
