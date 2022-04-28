@@ -4,7 +4,16 @@ namespace Controllers;
 use \ZipArchive;
 
 class DLImages {
-    public function DLImages(array $images, string $fileName = 'images.zip'): void {
+    public function DLImages(array $tweets, string $fileName = 'images.zip'): void {
+
+        // リストから画像を抽出
+        $images = [];
+        foreach ($tweets as $t) {
+            foreach ($t['images'] as $i) {
+                $images[] = $i;
+            }
+        }
+
         $zip = new ZipArchive();
 
         // DLするZipのファイル名

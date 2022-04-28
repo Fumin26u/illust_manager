@@ -28,8 +28,7 @@ if (isset($_GET['id']) && $_SERVER['REQUEST_METHOD'] === 'GET') {
 
     // バリデーションでエラーが発生した場合APIを呼ばず処理を行う
     if (isset($query[0]) && $query[0] === true) {
-        $err += $query[1];
-        v($err);
+        $err[] = $query[1];
     } else {
         // 「前回保存した画像以降を取得」にチェックが入っている場合、DBからツイートIDを取得
         $d = new LatestDL();
@@ -48,14 +47,6 @@ if (isset($_GET['id']) && $_SERVER['REQUEST_METHOD'] === 'GET') {
 // 保存ボタンが押された場合の処理
 if (isset($_POST['download']) && $_SERVER['REQUEST_METHOD'] === 'POST' && isset($_SESSION['tweets'])) {
     $tweets = $_SESSION['tweets'];
-
-    // リストから画像を抽出
-    $images = [];
-    foreach ($tweets as $t) {
-        foreach ($t['images'] as $i) {
-            $images[] = $i;
-        }
-    }
 
     // 画像をダウンロード
     $dlImages = new DLImages;
@@ -134,7 +125,6 @@ $canonical = "https://imagedler.com/";
         使用する前に、<a href="<?= $home ?>t/terms_of_use.php">利用規約</a>と<a href="<?= $home ?>t/privacy_policy.php">プライバシーポリシー</a>の確認をお願いします。<br>
         [送信]ボタンを押した(またはユーザー登録を行った)時点で、利用規約とプライバシーポリシーに同意したとみなします。
     </small>
-    <?php // <small>数値のTwitter IDは、<a href="https://idtwi.com/" target="_blank" rel="noopener noreferrer">idtwi</a>などから検索できます。</small> ?>
     <form action="<?= h($_SERVER['PHP_SELF']) ?>" method="GET">
         <dl class="form_list">
             <div>
@@ -183,6 +173,11 @@ $canonical = "https://imagedler.com/";
         <input type="submit" value="送信">
     </form>
 </div>
+<?php if (!empty($err)) { 
+    foreach ($err as $e) { ?>
+    <p class="error_notice"><?= $e ?></p>
+<?php }
+} ?>
 <?php if (isset($tweets)) { ?>
 <p><?= count($tweets) ?>件のツイートが取得されました。</p>
 <div class="download_area">
