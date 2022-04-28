@@ -17,9 +17,10 @@ if (isset($_GET['id'])) {
     $q = new QueryMaking();
     $query = $q->makeGetTweetsQuery($_GET);
     v($query);
+    $l = new ImgList();
+    $likes = $l->imgList($query);
+    v($likes);
     exit;
-    $likes = new ImgList($_GET);
-
 }
 
 

@@ -1,5 +1,6 @@
 <?php
-require_once($home . '../system-conf.php');
+// use database\Connection\DBInfo;
+require_once("system-conf.php");
 
 // タイムゾーン設定
 date_default_timezone_set('Asia/Tokyo');
