@@ -5,8 +5,6 @@ class QueueMaking {
 
     public function makeGetTweetsQueue(array $queue) {
 
-        $return = [];
-
         $values = [];
         $err = [];
 
@@ -34,15 +32,15 @@ class QueueMaking {
         // count
         // 規定値以外の数値が入っていればエラー
         // v($queue['count']);
-        if ($queue['count'] <= 0 && $queue['count'] > 500) {
+        if ($queue['count'] <= 0 || $queue['count'] > 200) {
             $err[] = '取得ツイート数が規定値以上です。';
         } else {
             $values['count'] = h($queue['count']);
         }
 
         if (!empty($err)) {
-            $return += $err;
-            return $return;
+            $exception = true;
+            return [$exception, $err];
         } else {
             // latest_dl
             if (isset($queue['latest_dl'])) $values['latest_dl'] = h($queue['latest_dl']);
@@ -53,8 +51,7 @@ class QueueMaking {
                 $values['ed_time'] = h($queue['ed_time']) . ':00Z';
             }
 
-            $return += $values;
-            return $return;
+            return $values;
         }
     }
 

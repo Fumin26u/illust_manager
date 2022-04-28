@@ -5,7 +5,10 @@ require_once("system-conf.php");
 // タイムゾーン設定
 date_default_timezone_set('Asia/Tokyo');
 
-
+function dbConnect() {
+    $pdo = new PDO(DSN, DBUSER, DBPASS);
+    return $pdo;
+}
 
 // ClickJacking対策
 header('X-FRAME-OPTIONS: SAMEORIGIN');

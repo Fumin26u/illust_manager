@@ -29,7 +29,7 @@ class ImgList extends APIKey {
         return $curl;
     }
 
-	public function imgList(array $queue) {
+	public function imgList(array $queue, string $latest_dl = '') {
 		/* 
         params of $queue
 		id: Twitter ID
@@ -88,6 +88,10 @@ class ImgList extends APIKey {
         $get_tweets_count = 10;
         // 取得したツイートを格納する配列
         $tweet_list = [];
+        // 返す配列に挿入したツイートのカウンタ
+        $tc = 0;
+        // 返す配列
+        $tweet_info = [];
         // Pagination Token
         $pagination_token = '';
         while ($tweet_count > 0) {
@@ -110,56 +114,42 @@ class ImgList extends APIKey {
             // APIへの問い合わせとツイート情報の取り出し
             $curl = $this->setCurl($request_url);
             $response = curl_exec($curl);
-            $res = json_decode($response, true); 
-            
-            $all_tweet_list[] = $res;
-            $pagination_token = $res['meta']['next_token'];
-        }
+            $tweet_list = json_decode($response, true); 
 
-        // 取得したツイート情報の整理
-        // ユーザ一覧を[ユーザID] => [ユーザ名]の連想配列に変更
-        $tweet_users = [];
-        foreach ($all_tweet_list as $tweet_list) {
+            // ユーザ一覧を[ユーザID] => [ユーザ名]の連想配列に変更
+            $tweet_users = [];
             foreach ($tweet_list['includes']['users'] as $u) {
                 $tweet_users[$u['id']] = $u['name'];
             }
-        }
-        // 画像を[メディアキー] => [URL]の連想配列に変更
-        $tweet_medias = [];
-        foreach ($all_tweet_list as $tweet_list) {
+
+            // 画像を[メディアキー] => [URL]の連想配列に変更
+            $tweet_medias = [];            
             foreach ($tweet_list['includes']['media'] as $m) {
                 $tweet_medias[$m['media_key']] = $m['url'];
             }
-        }
-        // echo '<pre>';
-        // v($tweet_users);
-        // echo '</pre>';
-        $tweet_info = [];
-        $i = 0;
-        foreach ($all_tweet_list as $tweet_list) {
+
             foreach ($tweet_list['data'] as $t) {
-                $tweet_info[$i]['post_id'] = $t['id'];
-                $tweet_info[$i]['post_time'] = DateTime::createFromFormat('Y-m-d H:i:s', $t['created_at']);
-                $tweet_info[$i]['user'] = $tweet_users[$t['author_id']];
-                $tweet_info[$i]['text'] = substr($t['text'], 0, -24);
-                $tweet_info[$i]['images'] = [];
-                $tweet_info[$i]['url'] = mb_substr($t['text'], -24);
+                // 取得したツイートのIDが前回保存したツイートIDだった場合、キューへの挿入を終了
+                if ($latest_dl !== '' && $t['id'] === $latest_dl) break 2;
+
+                $tweet_info[$tc]['post_id'] = $t['id'];
+                $tweet_info[$tc]['post_time'] = DateTime::createFromFormat('Y-m-d H:i:s', $t['created_at']);
+                $tweet_info[$tc]['user'] = $tweet_users[$t['author_id']];
+                $tweet_info[$tc]['text'] = substr($t['text'], 0, -24);
+                $tweet_info[$tc]['images'] = [];
+                $tweet_info[$tc]['url'] = mb_substr($t['text'], -24);
 
                 // データのメディアキーから画像を挿入
                 foreach ($t['attachments']['media_keys'] as $m) {
-                    $tweet_info[$i]['images'][] = $tweet_medias[$m];
+                    $tweet_info[$tc]['images'][] = $tweet_medias[$m];
                 }
-                $i++;
+                $tc++;
             }
-        } 
 
-        return ($tweet_info);
-
-        /* ------------------------------
-
-            ツイート一覧を画面表示用に抽出
-
-        ------------------------------ */
-        $images = [];
+            $all_tweet_list[] = $tweet_list;
+            $pagination_token = $tweet_list['meta']['next_token'];
+        }
+        
+        return $tweet_info;
 	}
 }

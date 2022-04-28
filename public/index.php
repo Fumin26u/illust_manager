@@ -3,7 +3,11 @@ $home = './';
 
 use Controllers\ImgList;
 use Controllers\QueueMaking;
+use Database\Reads\LatestDL;
 // declare(strict_types = 1);
+
+$msg = [];
+$err = [];
 
 // require($home . '../apiset.php');
 require_once($home . '../commonlib.php');
@@ -18,39 +22,24 @@ if (isset($_GET['id'])) {
     // $_GETのバリデーション処理
     $q = new QueueMaking();
     $query = $q->makeGetTweetsQueue($_GET);
-    $l = new ImgList();
-    $likes = $l->imgList($query);
-    // echo '<pre>';
-    // v($likes);
-    // echo '</pre>';
+
+    // バリデーションでエラーが発生した場合APIを呼ばず処理を行う
+    if (isset($query[0]) && $query[0] === true) {
+        $err += $query[1];
+        v($err);
+    } else {
+        // 「前回保存した画像以降を取得」にチェックが入っている場合、DBからツイートIDを取得
+        $d = new LatestDL();
+        $latest_dl = $d->LatestDL();
+    
+        // ツイート一覧を取得
+        $l = new ImgList();
+        $likes = $l->imgList($query, $latest_dl);
+        // echo '<pre>';
+        // v($likes);
+        // echo '</pre>';
+    }
 }
-
-
-// if (isset($_GET['id'])) {
-//     // 最大画像取得数
-//     $count = h($_GET['count']);
-
-//     $latest_dl = false;
-
-//     // 「前回保存した画像移行を取得」にチェックが入っている場合
-//     if (isset($_GET['latest_dl'])) {
-//         $pdo = dbConnect();
-//         // latest_dlテーブルの確認
-//         $st = $pdo->prepare('SELECT post_id FROM latest_dl WHERE user_id = :user_id AND sns_type = "T"');
-//         $st->bindValue(':user_id', $user_id, PDO::PARAM_INT);
-//         $st->execute();
-//         $row = $st->fetch(PDO::FETCH_ASSOC);
-//         // latest_dlテーブルに前回保存した画像の投稿IDがある場合、変数に挿入
-//         if ($row['post_id'] !== "") $latest_dl = $row['post_id']; 
-//     }
-
-//     // ツイートの取得処理(期間指定ありなしで変化)
-//     if (isset($_GET['using_term'])) {
-//         $likes = getTweets($_GET['id'], $count, $latest_dl, $_GET['object'], true, $_GET['st_time'], $_GET['ed_time']);
-//     } else {
-//         $likes = getTweets($_GET['id'], $count, $latest_dl, $_GET['object'], false);
-//     }
-// }
 
 // 保存ボタンが押された場合の処理
 if (isset($_POST['download'])) {
@@ -192,33 +181,6 @@ SQL;
     }
 }
 
-// ログインしている場合、期間指定の開始時刻の読み込みを行う
-if (isset($user_id, $user_name)) {
-    try {
-
-        $pdo = dbConnect();
-
-        $st = $pdo->prepare('SELECT latest_time FROM used_time WHERE user_id = :user_id AND sns_type = "T"');
-        $st->bindValue(':user_id', $user_id, PDO::PARAM_INT);
-        $st->execute();
-        $row = $st->fetch(PDO::FETCH_ASSOC);
-
-        // ログインしているユーザIDのデータが存在する場合、時刻を設定
-        if (!empty($row)) {
-            $t = $row['latest_time'];
-            $st_time = str_replace(' ', 'T', $t);
-        }
-        // URL引数st_timeが設定されている場合、その値に更新
-        if (isset($_GET['st_time'])) $st_time = h($_GET['st_time']);
-
-    } catch (PDOException $e) {
-        echo 'データベース接続に失敗しました';
-        if (DEBUG) {
-            echo $e;
-        }
-    }
-}
-
 // 現在時刻を生成
 $t = new DateTime();
 $today = $t->format('Y-m-d');
@@ -276,9 +238,9 @@ $canonical = "https://imagedler.com/";
                 </dd>
             </div>
             <div>
-                <dt>取得ツイート数<em>*</em><br>(最大500)</dt>
+                <dt>取得ツイート数<em>*</em><br>(最大200)</dt>
                 <dd>
-                    <input type="number" name="count" value="<?= isset($_GET['count']) ? h($_GET['count']) : '100' ?>" max="500" min="10" step="10" required>
+                    <input type="number" name="count" value="<?= isset($_GET['count']) ? h($_GET['count']) : '100' ?>" max="200" min="10" step="10" required>
                 </dd>
             </div>
             <div>

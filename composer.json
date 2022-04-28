@@ -8,7 +8,10 @@
     "autoload": {
         "psr-4": {
             "Controllers\\": "Controllers/",
-            "Database\\": "database"
+            "Database\\": "Database/",
+            "Database\\Connection\\": "Database/Connection",
+            "Database\\Reads\\": "Database/Reads",
+            "Database\\Posts\\": "Database/Posts"
         }
     }
 }
