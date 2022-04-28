@@ -55,11 +55,11 @@ class ImgList extends APIKey {
         $screen_name = $queue['id'];
         $request_url = $endPoint . $screen_name;   
     
-        // APIへの問い合わせと数値のuser_idの取り出し
+        // APIへの問い合わせと数値のtwitter_user_idの取り出し
         $curl = $this->setCurl($request_url);
         $response = curl_exec($curl);
         $res = json_decode($response, true);
-        $user_id = $res['data']['id'];
+        $twitter_user_id = $res['data']['id'];
 
         /* ------------------------------
 
@@ -67,7 +67,7 @@ class ImgList extends APIKey {
 
         ------------------------------ */
         // エンドポイントの判定
-        $endPoint = 'https://api.twitter.com/2/users/' . $user_id;
+        $endPoint = 'https://api.twitter.com/2/users/' . $twitter_user_id;
         switch ($queue['object']) {
             case 'likes':
                 $endPoint .= '/liked_tweets';
@@ -80,7 +80,7 @@ class ImgList extends APIKey {
                 break;
         }
 
-        $endPoint = 'https://api.twitter.com/2/users/' . $user_id . '/liked_tweets';
+        $endPoint = 'https://api.twitter.com/2/users/' . $twitter_user_id . '/liked_tweets';
 
         // 取得するツイート数
         $tweet_count = $queue['count']; 

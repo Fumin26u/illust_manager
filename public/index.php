@@ -20,9 +20,9 @@ if (isset($_GET['id'])) {
     $query = $q->makeGetTweetsQueue($_GET);
     $l = new ImgList();
     $likes = $l->imgList($query);
-    echo '<pre>';
-    v($likes);
-    echo '</pre>';
+    // echo '<pre>';
+    // v($likes);
+    // echo '</pre>';
 }
 
 
