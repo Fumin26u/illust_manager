@@ -1,9 +1,12 @@
 <?php
 $home = './';
 
+use Controllers\DLImages;
 use Controllers\ImgList;
 use Controllers\QueueMaking;
+use Database\Posts\SetDLCount;
 use Database\Reads\LatestDL;
+use Database\Posts\SetLatestDL;
 // declare(strict_types = 1);
 
 $msg = [];
@@ -18,7 +21,7 @@ require('versions.php');
 $is_login = isset($_SESSION['user_id']) ? true : false;
 
 // 送信ボタンが押された場合の処理
-if (isset($_GET['id'])) {
+if (isset($_GET['id']) && $_SERVER['REQUEST_METHOD'] === 'GET') {
     // $_GETのバリデーション処理
     $q = new QueueMaking();
     $query = $q->makeGetTweetsQueue($_GET);
@@ -34,143 +37,45 @@ if (isset($_GET['id'])) {
     
         // ツイート一覧を取得
         $l = new ImgList();
-        $likes = $l->imgList($query, $latest_dl);
+        $_SESSION['tweets'] = $l->imgList($query, $latest_dl);
+        $tweets = $_SESSION['tweets'];
         // echo '<pre>';
-        // v($likes);
+        // v($_SESSION['tweets']);
         // echo '</pre>';
     }
 }
 
 // 保存ボタンが押された場合の処理
-if (isset($_POST['download'])) {
-    // ログインしている場合、期間指定の終了時刻をDBに登録
-    if (isset($user_id, $user_name)) {
-        try {
-                
-            $pdo = dbConnect();
+if (isset($_POST['download']) && $_SERVER['REQUEST_METHOD'] === 'POST' && isset($_SESSION['tweets'])) {
+    $tweets = $_SESSION['tweets'];
 
-            // used_timeテーブルの確認
-            // 既にDB(used_timeテーブル)に値がセットされているかどうか
-            $is_set_value = true;
-            $st = $pdo->prepare('SELECT user_id FROM used_time WHERE user_id = :user_id AND sns_type = "T"');
-            $st->bindValue(':user_id', $user_id, PDO::PARAM_INT);
-            $st->execute();
-            $row = $st->fetch(PDO::FETCH_ASSOC);
-            if (empty($row)) $is_set_value = false;
-
-            // URL引数から終了時刻を取得
-            $ed_getTime = h($_GET['ed_time']);
-            
-            $pdo->beginTransaction();
-
-            // DBに値が存在する場合、UPDATE
-            if ($is_set_value) {
-                $sql = <<<SQL
-UPDATE used_time SET
-latest_time = :latest_time
-WHERE 
-user_id = :user_id AND sns_type = 'T'
-SQL;
-            } else {
-                $sql = <<<SQL
-INSERT INTO used_time 
-(user_id, latest_time, sns_type) 
-VALUES 
-(:user_id, :latest_time, 'T')
-SQL;
-            }
-            $st = $pdo->prepare($sql);
-            $st->bindValue(':user_id', $user_id, PDO::PARAM_INT);
-            $st->bindValue(':latest_time', $ed_getTime, PDO::PARAM_STR);
-            $st->execute();
-
-            // latest_dlテーブルの確認
-            // 既にDB(used_timeテーブル)に値がセットされているかどうか
-            $is_set_value = true;
-            $st = $pdo->prepare('SELECT user_id FROM latest_dl WHERE user_id = :user_id AND sns_type = "T"');
-            $st->bindValue(':user_id', $user_id, PDO::PARAM_INT);
-            $st->execute();
-            $row = $st->fetch(PDO::FETCH_ASSOC);
-            if (empty($row)) $is_set_value = false;
-
-            // DBに値が存在する場合、UPDATE
-            if ($is_set_value) {
-                $sql = <<<SQL
-UPDATE latest_dl SET
-post_id = :post_id,
-created_at = NOW()
-WHERE 
-user_id = :user_id AND sns_type = 'T'
-SQL;
-            } else {
-                $sql = <<<SQL
-INSERT INTO latest_dl 
-(user_id, post_id, sns_type, created_at)
-VALUES 
-(:user_id, :post_id, 'T', NOW())
-SQL;    
-            }
-            $st = $pdo->prepare($sql);
-            $st->bindValue(':user_id', $user_id, PDO::PARAM_INT);
-            // ツイートIDは数値だが、桁数が12以上なのでVARCHAR型で保存
-            $st->bindValue(':post_id', h($likes[0]['post_id']), PDO::PARAM_STR);
-            $st->execute();
-            
-            $pdo->commit();   
-
-        } catch (PDOException $e) {
-            echo 'データベース接続に失敗しました';
-            if (DEBUG) {
-                echo $e;
-            }
-        }
-    }
-    
     // リストから画像を抽出
     $images = [];
-    foreach ($likes as $l) {
-        foreach ($l['images'] as $i) {
+    foreach ($tweets as $t) {
+        foreach ($t['images'] as $i) {
             $images[] = $i;
         }
     }
+
     // 画像をダウンロード
-    require_once($home . '../dlImages.php');
-    dlImages($images);
+    $dlImages = new DLImages;
+    $dlImages->DLImages($images);
 
-    // ログインしている場合、DL回数と保存した画像の総数を更新
-    if (isset($user_id, $user_name)) {
+    // ログインしている場合の処理
+    if (isset($_SESSION['user_id'], $_SESSION['user_name'])) {
         try {
+            // latest_dlテーブルの確認
+            // 既にDB(latest_dlテーブル)に値がセットされているかどうか
+            $d = new LatestDL();
+            $isset_latest_dl = $d->LatestDL();
 
-            $pdo = dbConnect();
-            $imc = count($images);
+            // 期間指定の終了時刻の登録
+            $s = new SetLatestDL();
+            $s->SetLatestDL($isset_latest_dl, $tweets[0]['post_id']);
 
-            $st = $pdo->prepare('SELECT dl_count, images_count FROM user WHERE user_id = :user_id');
-            $st->bindValue(':user_id', $user_id, PDO::PARAM_INT);
-            $st->execute();
-            $rows = $st->fetch(PDO::FETCH_ASSOC);
-            v($rows);
-            // DLした回数
-            $dl_count = is_null($rows['dl_count']) ? 0 : $rows['dl_count']; 
-            // 保存した画像の総数
-            $images_count = is_null($rows['images_count']) ? 0 : $rows['images_count'];
-            // カウンタを増加
-            $dl_count += 1;
-            $images_count += $imc;
-
-            $pdo->beginTransaction();
-            $sql = <<<SQL
-UPDATE user SET 
-dl_count = :dl_count,
-images_count = :images_count
-WHERE user_id = :user_id
-SQL;
-            $st = $pdo->prepare($sql);
-            $st->bindValue(':dl_count', $dl_count, PDO::PARAM_INT);
-            $st->bindValue(':images_count', $images_count, PDO::PARAM_INT);
-            $st->bindValue(':user_id', $user_id, PDO::PARAM_INT);
-            $st->execute();
-
-            $pdo->commit();
+            // DL回数と保存した画像の総数を更新
+            $s = new SetDLCount;
+            $s->SetDLCount(count($images));
 
         } catch (PDOException $e) {
             echo 'データベース接続に失敗しました';
@@ -179,6 +84,9 @@ SQL;
             }
         }
     }
+
+    // セッションに一時保存したツイート情報を破棄
+    $_SESSION['tweets'] = null;
 }
 
 // 現在時刻を生成
@@ -275,8 +183,8 @@ $canonical = "https://imagedler.com/";
         <input type="submit" value="送信">
     </form>
 </div>
-<?php if (isset($likes)) { ?>
-<p><?= count($likes) ?>件のツイートが取得されました。</p>
+<?php if (isset($tweets)) { ?>
+<p><?= count($tweets) ?>件のツイートが取得されました。</p>
 <div class="download_area">
     <p>[保存]ボタンを押すと、ダウンロードフォルダにZipファイルで保存されます。</p>
     <form action="" method="POST">
@@ -284,17 +192,17 @@ $canonical = "https://imagedler.com/";
     </form>
 </div>
 <ul class="likes_list">
-    <?php foreach($likes as $l) { ?>
+    <?php foreach($tweets as $t) { ?>
         <li>
-            <p class="user_name"><?= $l['user'] ?></p>
-            <p><?= $l['post_time'] ?></p>
-            <p class="tweet_content"><?= $l['text'] ?></p>
-            <?php foreach($l['images'] as $i) { ?>
+            <p class="user_name"><?= $t['user'] ?></p>
+            <p><?= $t['post_time'] ?></p>
+            <p class="tweet_content"><?= $t['text'] ?></p>
+            <?php foreach($t['images'] as $i) { ?>
                 <img src="<?= $i ?>" alt="">
             <?php } ?>
             <p>
                 ツイート元リンク:
-                <a href="<?= $l['url'] ?>" target="_blank" rel="noopener noreferrer"><?= $l['url'] ?></a>
+                <a href="<?= $t['url'] ?>" target="_blank" rel="noopener noreferrer"><?= $t['url'] ?></a>
             </p>
         </li>
         <?php } 
