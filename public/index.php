@@ -2,7 +2,7 @@
 $home = './';
 
 use Controllers\ImgList;
-use Controllers\QueryMaking;
+use Controllers\QueueMaking;
 // declare(strict_types = 1);
 
 require($home . '../apiset.php');
@@ -14,13 +14,13 @@ $is_login = isset($_SESSION['user_id']) ? true : false;
 // 送信ボタンが押された場合の処理
 if (isset($_GET['id'])) {
     // $_GETのバリデーション処理
-    $q = new QueryMaking();
-    $query = $q->makeGetTweetsQuery($_GET);
-    v($query);
+    $q = new QueueMaking();
+    $query = $q->makeGetTweetsQueue($_GET);
     $l = new ImgList();
     $likes = $l->imgList($query);
-    v($likes);
-    exit;
+    // echo '<pre>';
+    // v($likes);
+    // echo '</pre>';
 }
 
 
@@ -225,15 +225,6 @@ $n = new DateTime();
 $now = $n->format('H:i');
 $nowTime = $today . 'T' . $now;
 
-// 遡れる最低年月日
-$m = new DateTime();
-$minDay = $m->modify("-1 months")->format('Y-m-d'); 
-// $minTime = $minDay . 'T' . $now;
-
-// echo('<pre>');
-// v($likes);
-// echo('</pre>');
-
 // メタタグの整備
 // ページタイトルの設定
 $title = isset($_GET['id']) ? '@' . $_GET['id'] . 'のいいねツイート一覧 | TwimageDLer' : "TwimageDLer | \"いいね\"した画像の自動ダウンローダー";
@@ -285,7 +276,7 @@ $canonical = "https://imagedler.com/";
             <div>
                 <dt>取得ツイート数<em>*</em><br>(最大500)</dt>
                 <dd>
-                    <input type="number" name="count" value="<?= isset($_GET['count']) ? h($_GET['count']) : '100' ?>" max="500" min="1" required>
+                    <input type="number" name="count" value="<?= isset($_GET['count']) ? h($_GET['count']) : '100' ?>" max="500" min="10" step="10" required>
                 </dd>
             </div>
             <div>

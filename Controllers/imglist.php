@@ -8,6 +8,7 @@ namespace Controllers;
 
 use Abraham\TwitterOAuth\TwitterOAuth;
 use Controllers\APIKey;
+use \DateTime;
 
 class ImgList extends APIKey {
     private function setCurl($req) {
@@ -28,9 +29,9 @@ class ImgList extends APIKey {
         return $curl;
     }
 
-	public function imgList(array $query) {
+	public function imgList(array $queue) {
 		/* 
-        params of $query
+        params of $queue
 		id: Twitter ID
         count: 取得するツイート数
         latest_dl: 前回取得した画像以降を取得するかどうか
@@ -51,7 +52,7 @@ class ImgList extends APIKey {
 
         ------------------------------ */
         $endPoint = 'https://api.twitter.com/2/users/by/username/';
-        $screen_name = $query['id'];
+        $screen_name = $queue['id'];
         $request_url = $endPoint . $screen_name;   
     
         // APIへの問い合わせと数値のuser_idの取り出し
@@ -66,41 +67,99 @@ class ImgList extends APIKey {
 
         ------------------------------ */
         // エンドポイントの判定
-        if ($query['object'] === 'likes') {
-
-            $endPoint = 'https://api.twitter.com/2/users/' . $user_id . '/liked_tweets';
-
-            $query = [
-                'max_results' => 10,
-                'expansions' => 'author_id,entities.mentions.username',
-                'tweet.fields' => 'created_at,entities',
-                'user.fields' => 'username',
-            ];
-
-            $request_url = $endPoint . '?' . http_build_query($query);
-
-        } else if ($query['object'] === 'tweets') {
-
-            $endPoint = 'https://api.twitter.com/2/users/' . $user_id . '/tweets';
-
-            $query = [
-                'max_results' => 100,
-                'expansions' => 'author_id,entities.mentions.username',
-                'tweet.fields' => 'created_at,entities',
-                'user.fields' => 'username',
-            ];
-
-            if (isset($query['using_term'])) $query['end_time'] = $query['using_term'];
-
-            $request_url = $endPoint . '?' . http_build_query($query);
-
+        $endPoint = 'https://api.twitter.com/2/users/' . $user_id;
+        switch ($queue['object']) {
+            case 'likes':
+                $endPoint .= '/liked_tweets';
+                break;
+            case 'tweets':
+                $endPoint .= '/tweets';
+                break;
+            default:
+                $endPoint .= '/liked_tweets';
+                break;
         }
 
-        // APIへの問い合わせとツイート情報の取り出し
-        $curl = $this->setCurl($request_url);
-        $response = curl_exec($curl);
-        $res = json_decode($response, true);
+        $endPoint = 'https://api.twitter.com/2/users/' . $user_id . '/liked_tweets';
 
-        return ($res);
+        // 取得するツイート数
+        $tweet_count = $queue['count']; 
+        // 1度に取得するツイート数
+        $get_tweets_count = 10;
+        // 取得したツイートを格納する配列
+        $tweet_list = [];
+        // Pagination Token
+        $pagination_token = '';
+        while ($tweet_count > 0) {
+            $tweet_count -= $get_tweets_count;
+            $query = [
+                'max_results' => $get_tweets_count,
+                'expansions' => 'attachments.media_keys,author_id',
+                'tweet.fields' => 'created_at',
+                'media.fields' => 'url',
+                'user.fields' => 'username',
+            ];
+    
+            if ($queue['object'] === 'tweets' && isset($queue['ed_time'])) $query['end_time'] = $queue['ed_time'];
+            
+            // Pagination Tokenが存在する場合、クエリに追加
+            if ($pagination_token !== '') $query['pagination_token'] = $pagination_token;
+    
+            $request_url = $endPoint . '?' . http_build_query($query);
+    
+            // APIへの問い合わせとツイート情報の取り出し
+            $curl = $this->setCurl($request_url);
+            $response = curl_exec($curl);
+            $res = json_decode($response, true); 
+            
+            $all_tweet_list[] = $res;
+            $pagination_token = $res['meta']['next_token'];
+        }
+
+        // 取得したツイート情報の整理
+        // ユーザ一覧を[ユーザID] => [ユーザ名]の連想配列に変更
+        $tweet_users = [];
+        foreach ($all_tweet_list as $tweet_list) {
+            foreach ($tweet_list['includes']['users'] as $u) {
+                $tweet_users[$u['id']] = $u['name'];
+            }
+        }
+        // 画像を[メディアキー] => [URL]の連想配列に変更
+        $tweet_medias = [];
+        foreach ($all_tweet_list as $tweet_list) {
+            foreach ($tweet_list['includes']['media'] as $m) {
+                $tweet_medias[$m['media_key']] = $m['url'];
+            }
+        }
+        // echo '<pre>';
+        // v($tweet_users);
+        // echo '</pre>';
+        $tweet_info = [];
+        $i = 0;
+        foreach ($all_tweet_list as $tweet_list) {
+            foreach ($tweet_list['data'] as $t) {
+                $tweet_info[$i]['post_id'] = $t['id'];
+                $tweet_info[$i]['post_time'] = DateTime::createFromFormat('Y-m-d H:i:s', $t['created_at']);
+                $tweet_info[$i]['user'] = $tweet_users[$t['author_id']];
+                $tweet_info[$i]['text'] = substr($t['text'], 0, 24);
+                $tweet_info[$i]['images'] = [];
+                $tweet_info[$i]['url'] = substr($t['text'], -1, 24);
+
+                // データのメディアキーから画像を挿入
+                foreach ($t['attachments']['media_keys'] as $m) {
+                    $tweet_info[$i]['images'][] = $tweet_medias[$m];
+                }
+                $i++;
+            }
+        } 
+
+        return ($tweet_info);
+
+        /* ------------------------------
+
+            ツイート一覧を画面表示用に抽出
+
+        ------------------------------ */
+        $images = [];
 	}
 }

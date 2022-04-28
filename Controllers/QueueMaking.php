@@ -1,9 +1,9 @@
 <?php
 namespace Controllers;
 
-class QueryMaking {
+class QueueMaking {
 
-    public function makeGetTweetsQuery(array $query) {
+    public function makeGetTweetsQueue(array $queue) {
 
         $return = [];
 
@@ -11,33 +11,33 @@ class QueryMaking {
         $err = [];
 
         // setされていないキーの判定
-        if (!(isset($query['id'], $query['object'], $query['count']))) {
+        if (!(isset($queue['id'], $queue['object'], $queue['count']))) {
             $err[] = '必須項目が入力されていません。';
         }   
 
         // Twitter ID
         // 空であればエラー
-        if ($query['id'] === '') {
+        if ($queue['id'] === '') {
             $err[] = 'Twitter IDが指定されていません。';
         } else {
-            $values['id'] = h($query['id']); 
+            $values['id'] = h($queue['id']); 
         }
 
         // object
         // likes / tweets 以外の値が入っている場合エラー
-        if ($query['object'] !== 'likes' && $query['object'] !== 'tweets') {
+        if ($queue['object'] !== 'likes' && $queue['object'] !== 'tweets') {
             $err[] = 'どの一覧を取得するか指定してください。';
         } else {
-            $values['object'] = h($query['object']);
+            $values['object'] = h($queue['object']);
         }
  
         // count
         // 規定値以外の数値が入っていればエラー
-        // v($query['count']);
-        if ($query['count'] <= 0 && $query['count'] > 500) {
+        // v($queue['count']);
+        if ($queue['count'] <= 0 && $queue['count'] > 500) {
             $err[] = '取得ツイート数が規定値以上です。';
         } else {
-            $values['count'] = h($query['count']);
+            $values['count'] = h($queue['count']);
         }
 
         if (!empty($err)) {
@@ -45,12 +45,12 @@ class QueryMaking {
             return $return;
         } else {
             // latest_dl
-            if (isset($query['latest_dl'])) $values['latest_dl'] = h($query['latest_dl']);
+            if (isset($queue['latest_dl'])) $values['latest_dl'] = h($queue['latest_dl']);
     
             // ツイート一覧を取得する場合
             // 期間指定を行うかつ、その値が不正である場合エラー
-            if ($query['object'] === 'tweets' && isset($query['ed_time'])) {
-                $values['ed_time'] = h($query['ed_time']);
+            if ($queue['object'] === 'tweets' && isset($queue['ed_time'])) {
+                $values['ed_time'] = h($queue['ed_time']) . ':00Z';
             }
 
             $return += $values;
