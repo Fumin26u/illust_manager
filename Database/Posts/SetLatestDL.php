@@ -1,5 +1,5 @@
 <?php
-namespace database\Posts;
+namespace Database\Posts;
 
 use \PDO;
 

@@ -50,7 +50,7 @@ if (isset($_POST['download']) && $_SERVER['REQUEST_METHOD'] === 'POST' && isset(
 
     // 画像をダウンロード
     $dlImages = new DLImages;
-    $dlImages->DLImages($images);
+    $images_count = $dlImages->DLImages($tweets);
 
     // ログインしている場合の処理
     if (isset($_SESSION['user_id'], $_SESSION['user_name'])) {
@@ -66,7 +66,7 @@ if (isset($_POST['download']) && $_SERVER['REQUEST_METHOD'] === 'POST' && isset(
 
             // DL回数と保存した画像の総数を更新
             $s = new SetDLCount;
-            $s->SetDLCount(count($images));
+            $s->SetDLCount($images_count);
 
         } catch (PDOException $e) {
             echo 'データベース接続に失敗しました';

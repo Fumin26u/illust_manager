@@ -99,7 +99,7 @@ $canonical = "https://imagedler.com/mail/";
 
 // 名前のValueの設定
 $name = '';
-if (isset($user_name)) $name = h($user_name);
+if (isset($_SESSION['user_name'])) $name = h($_SESSION['user_name']);
 if (isset($_POST['name'])) $name = h($_POST['name']);
 ?>
 <!DOCTYPE html>

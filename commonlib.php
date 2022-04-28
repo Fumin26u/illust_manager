@@ -44,14 +44,6 @@ function periodReplace($text) {
 // ログインページ以外の場合、SESSIONを開始
 if (!isset($login)) {
     session_start();
-
-    // SESSIONにユーザ名があれば、グローバル変数に挿入
-    if (isset($_SESSION['user_name'])) {
-        global $user_id, $user_name, $is_premium;
-        $user_id = h($_SESSION['user_id']);
-        $user_name = h($_SESSION['user_name']);
-        $is_premium = h($_SESSION['premium']);
-    }
 }
 
 // ログアウト処理

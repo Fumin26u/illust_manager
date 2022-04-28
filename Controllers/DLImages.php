@@ -4,7 +4,7 @@ namespace Controllers;
 use \ZipArchive;
 
 class DLImages {
-    public function DLImages(array $tweets, string $fileName = 'images.zip'): void {
+    public function DLImages(array $tweets, string $fileName = 'images.zip'): int {
 
         // リストから画像を抽出
         $images = [];
@@ -13,6 +13,7 @@ class DLImages {
                 $images[] = $i;
             }
         }
+        $count_images = count($images);
 
         $zip = new ZipArchive();
 
@@ -60,5 +61,7 @@ class DLImages {
         ob_end_clean();
         readfile($dl_file_name);
         unlink($dl_file_name);
+
+        return $count_images;
     }
 }
