@@ -5,7 +5,9 @@ use Controllers\ImgList;
 use Controllers\QueueMaking;
 // declare(strict_types = 1);
 
-require($home . '../apiset.php');
+// require($home . '../apiset.php');
+require_once($home . '../commonlib.php');
+require_once($home . "../vendor/autoload.php");
 require('versions.php');
 
 // ログインしているかどうか
@@ -18,37 +20,37 @@ if (isset($_GET['id'])) {
     $query = $q->makeGetTweetsQueue($_GET);
     $l = new ImgList();
     $likes = $l->imgList($query);
-    // echo '<pre>';
-    // v($likes);
-    // echo '</pre>';
+    echo '<pre>';
+    v($likes);
+    echo '</pre>';
 }
 
 
-if (isset($_GET['id'])) {
-    // 最大画像取得数
-    $count = h($_GET['count']);
+// if (isset($_GET['id'])) {
+//     // 最大画像取得数
+//     $count = h($_GET['count']);
 
-    $latest_dl = false;
+//     $latest_dl = false;
 
-    // 「前回保存した画像移行を取得」にチェックが入っている場合
-    if (isset($_GET['latest_dl'])) {
-        $pdo = dbConnect();
-        // latest_dlテーブルの確認
-        $st = $pdo->prepare('SELECT post_id FROM latest_dl WHERE user_id = :user_id AND sns_type = "T"');
-        $st->bindValue(':user_id', $user_id, PDO::PARAM_INT);
-        $st->execute();
-        $row = $st->fetch(PDO::FETCH_ASSOC);
-        // latest_dlテーブルに前回保存した画像の投稿IDがある場合、変数に挿入
-        if ($row['post_id'] !== "") $latest_dl = $row['post_id']; 
-    }
+//     // 「前回保存した画像移行を取得」にチェックが入っている場合
+//     if (isset($_GET['latest_dl'])) {
+//         $pdo = dbConnect();
+//         // latest_dlテーブルの確認
+//         $st = $pdo->prepare('SELECT post_id FROM latest_dl WHERE user_id = :user_id AND sns_type = "T"');
+//         $st->bindValue(':user_id', $user_id, PDO::PARAM_INT);
+//         $st->execute();
+//         $row = $st->fetch(PDO::FETCH_ASSOC);
+//         // latest_dlテーブルに前回保存した画像の投稿IDがある場合、変数に挿入
+//         if ($row['post_id'] !== "") $latest_dl = $row['post_id']; 
+//     }
 
-    // ツイートの取得処理(期間指定ありなしで変化)
-    if (isset($_GET['using_term'])) {
-        $likes = getTweets($_GET['id'], $count, $latest_dl, $_GET['object'], true, $_GET['st_time'], $_GET['ed_time']);
-    } else {
-        $likes = getTweets($_GET['id'], $count, $latest_dl, $_GET['object'], false);
-    }
-}
+//     // ツイートの取得処理(期間指定ありなしで変化)
+//     if (isset($_GET['using_term'])) {
+//         $likes = getTweets($_GET['id'], $count, $latest_dl, $_GET['object'], true, $_GET['st_time'], $_GET['ed_time']);
+//     } else {
+//         $likes = getTweets($_GET['id'], $count, $latest_dl, $_GET['object'], false);
+//     }
+// }
 
 // 保存ボタンが押された場合の処理
 if (isset($_POST['download'])) {

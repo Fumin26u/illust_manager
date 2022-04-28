@@ -141,9 +141,9 @@ class ImgList extends APIKey {
                 $tweet_info[$i]['post_id'] = $t['id'];
                 $tweet_info[$i]['post_time'] = DateTime::createFromFormat('Y-m-d H:i:s', $t['created_at']);
                 $tweet_info[$i]['user'] = $tweet_users[$t['author_id']];
-                $tweet_info[$i]['text'] = substr($t['text'], 0, 24);
+                $tweet_info[$i]['text'] = substr($t['text'], 0, -24);
                 $tweet_info[$i]['images'] = [];
-                $tweet_info[$i]['url'] = substr($t['text'], -1, 24);
+                $tweet_info[$i]['url'] = mb_substr($t['text'], -24);
 
                 // データのメディアキーから画像を挿入
                 foreach ($t['attachments']['media_keys'] as $m) {
