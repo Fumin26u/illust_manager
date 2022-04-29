@@ -4,7 +4,7 @@ require_once($home . "../vendor/autoload.php");
 use Abraham\TwitterOAuth\TwitterOAuth;
 
 // APIキー、トークンの設定
-function getTweets($id, $count, $latest_dl, $using_term, $st_time = false, $ed_time = false) {
+function getTweets($id, $count, $latest_dl, $object, $using_term, $st_time = false, $ed_time = false) {
 
     // APIキーとトークン
     include_once('../apikey.php');
@@ -13,7 +13,17 @@ function getTweets($id, $count, $latest_dl, $using_term, $st_time = false, $ed_t
     $connection = new TwitterOAuth($API_KEY, $API_KEY_SECRET, $ACCESS_TOKEN, $ACCESS_TOKEN_SECRET);
 
     // 「いいね」ツイート一覧のエンドポイント(URL)
-    $endPoint = 'favorites/list';
+    switch ($object) {
+        case 'likes':
+            $endPoint = 'favorites/list';
+            break;
+        case 'tweets':
+            $endPoint = 'statuses/user_timeline';
+            break;
+        default:
+            $endPoint = 'favorites/list';
+            break;
+    }
 
     // APIv2の場合
     // $connection->setApiVersion('2');
@@ -28,9 +38,11 @@ function getTweets($id, $count, $latest_dl, $using_term, $st_time = false, $ed_t
 
     // ループ毎に取得するツイート数
     $each_count = 50;
+    // v($point);
 
     $likes = [];
     $max_id = 0;
+    $posted_date = '';
     while ($counter > 0) {
         // カウンタの進行
         if ($counter < $each_count) $each_count = $counter;
@@ -38,13 +50,13 @@ function getTweets($id, $count, $latest_dl, $using_term, $st_time = false, $ed_t
 
         // 「いいね」したツイート一覧を取得
         if (empty($likes)) {
-            $likes_tweet_list = $connection->get($point, ['screen_name' => $account, 'count' => $each_count]);
+            $tweet_list = $connection->get($point, ['screen_name' => $account, 'count' => $each_count]);
         } else {
-            $likes_tweet_list = $connection->get($point, ['screen_name' => $account, 'count' => $each_count, 'max_id' => $max_id]);
+            $tweet_list = $connection->get($point, ['screen_name' => $account, 'count' => $each_count, 'max_id' => $max_id]);
         }
     
         // echo '<pre>';
-        // var_dump($likes_tweet_list);
+        // var_dump($tweet_list);
         // echo '</pre>';
     
         // 期間指定を行う場合、GETで取得した日付のフォーマットをする
@@ -56,7 +68,7 @@ function getTweets($id, $count, $latest_dl, $using_term, $st_time = false, $ed_t
         $queue = [];
         $co = 0;
         // キューにツイートを1つずつ挿入
-        foreach ($likes_tweet_list as $l) {
+        foreach ($tweet_list as $l) {
             // 取得内容の被り回避用カウンタ
             $co++;
             // 取得した投稿の配列の最後の場合、取得する最大投稿IDを、現在の投稿ID(-1)に変更
@@ -65,15 +77,27 @@ function getTweets($id, $count, $latest_dl, $using_term, $st_time = false, $ed_t
             // 前回保存した画像以降を取得する場合の処理
             // そのツイートの投稿IDが引数で渡された数値と同じ場合、キューへの挿入を終了
             if ($latest_dl !== false && $l->id_str == $latest_dl) break 2;
-    
+
+            // 画像付きツイートでない場合、キューに挿入しない
+            if (!isset($l->extended_entities)) continue;
+
+            // ツイート一覧取得の場合
+            if ($object === 'tweets') {
+                // RTならキューに挿入しない
+                if (strpos($l->text, 'RT @') !== false) continue;
+                
+                // そのツイートの投稿日時が1つ前のツイートより早い場合、キューへの挿入を終了
+                // echo $posted_date . ' / ' . date('Y-m-d H:i:s', strtotime((string) $l->created_at)) . '<br>';
+                if ($posted_date !== '' && $posted_date < date('Y-m-d H:i:s', strtotime((string) $l->created_at))) break 2;
+            }
+
             // そのツイートの投稿日時を取得
             $posted_date = date('Y-m-d H:i:s', strtotime((string) $l->created_at));
             // 期間指定を行う場合、キューへの挿入判定をする
             // 投稿日時がGETで取得した日付外の場合、キューに挿入しない
             if ($using_term && ($posted_date < $st_getTime || $posted_date > $ed_getTime)) continue;
     
-            // 画像付きツイートでない場合、キューに挿入しない
-            if (!isset($l->extended_entities)) continue;
+
             $queue['post_id'] = $l->id_str;
             $queue['post_time'] = $posted_date;
             $queue['user'] = $l->user->name;
