@@ -28,6 +28,11 @@
 	取得ツイート一覧
 
 --------------------*/
+.error_notice {
+    color: tomato;
+    font-weight: bold;
+}
+
 .likes_list {
     display: flex;
     justify-content: space-between;

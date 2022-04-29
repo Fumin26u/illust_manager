@@ -1,10 +1,9 @@
 apikey.php 
 gtag.inc
-system-conf.php 
+system-conf.php
+SystemConfig.php 
 twimagedler.sql 
-composer.json
 vendor/*
-reference/*
 phpstan.neon
 
 ##### Windows

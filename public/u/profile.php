@@ -51,7 +51,7 @@ SELECT user_name, email, created_at, premium, dl_count, images_count FROM user
 WHERE user.user_id = :user_id 
 SQL;
     $st = $pdo->prepare($sql);
-    $st->bindValue(':user_id', $user_id, PDO::PARAM_INT);
+    $st->bindValue(':user_id', $_SESSION['user_id'], PDO::PARAM_INT);
     $st->execute();
     $rows = $st->fetch(PDO::FETCH_ASSOC);
     // プレミアム会員かどうか
@@ -72,7 +72,7 @@ SQL;
 
     // 最終利用時刻を読み込む
     $st = $pdo->prepare('SELECT latest_time FROM used_time WHERE user_id = :user_id');
-    $st->bindValue(':user_id', $user_id, PDO::PARAM_INT);
+    $st->bindValue(':user_id', $_SESSION['user_id'], PDO::PARAM_INT);
     $st->execute();
     $row = $st->fetch(PDO::FETCH_ASSOC);
     $rows['latest_time'] = $row !== false ? $row['latest_time'] : 'まだ利用していません。';
