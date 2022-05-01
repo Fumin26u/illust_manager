@@ -7,7 +7,7 @@ namespace Controllers;
 // require_once($home . "../vendor/autoload.php");
 
 use Abraham\TwitterOAuth\TwitterOAuth;
-use Controllers\APIKey;
+use Values\APIKey;
 use \DateTime;
 
 class ImgList extends APIKey {
@@ -67,21 +67,7 @@ class ImgList extends APIKey {
 
         ------------------------------ */
         // エンドポイントの判定
-        $endPoint = 'https://api.twitter.com/2/users/' . $twitter_user_id;
-        switch ($queue['object']) {
-            case 'likes':
-                $endPoint .= '/liked_tweets';
-                break;
-            case 'tweets':
-                $endPoint .= '/tweets';
-                break;
-            case 'bookmarks':
-                $endPoint .= '/bookmarks';
-                break;
-            default:
-                $endPoint .= '/liked_tweets';
-                break;
-        }
+        $endPoint = 'https://api.twitter.com/2/users/' . $twitter_user_id . '/' . $queue['object'];
 
         // 取得するツイート数
         $tweet_count = $queue['count']; 

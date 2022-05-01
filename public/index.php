@@ -7,6 +7,7 @@ use Controllers\QueueMaking;
 use Database\Posts\SetDLCount;
 use Database\Reads\LatestDL;
 use Database\Posts\SetLatestDL;
+use Values\TwitterObjects;
 // declare(strict_types = 1);
 
 $msg = [];
@@ -131,36 +132,22 @@ $canonical = "https://imagedler.com/";
                 <dt>Twitter ID<em>*</em></dt>
                 <dd>
                     <input 
-                        type="text" 
-                        name="id" 
-                        value="<?= isset($_GET['id']) ? h($_GET['id']) : '' ?>" 
-                        required
+                    type="text" 
+                    name="id" 
+                    value="<?= isset($_GET['id']) ? h($_GET['id']) : '' ?>" 
+                    required
                     >の<br class="br">
+                    <?php foreach(TwitterObjects::$TwitterObjects as $key => $value) { ?>
                     <input 
                         type="radio" 
                         name="object" 
-                        value="likes" 
-                        id="object_likes" 
-                        <?= (isset($_GET['object']) && $_GET['object'] === 'likes') || empty($_GET) ? 'checked' : '' ?>
+                        value="<?= $key ?>" 
+                        id="<?= $key ?>" 
+                        <?= (isset($_GET['object']) && $_GET['object'] === $key) || empty($_GET) && $key === 'liked_tweets' ? 'checked' : '' ?>
+                        <?= $key === 'bookmarks' ? 'disabled' : '' ?>
                     >
-                    <label for="object_likes">いいね一覧を取得する</label><br class="br"> 
-                    <input 
-                        type="radio" 
-                        name="object" 
-                        value="tweets" 
-                        id="object_tweets"
-                        <?= isset($_GET['object']) && $_GET['object'] === 'tweets' ? 'checked' : '' ?>
-                    >
-                    <label for="object_tweets">ツイート一覧を取得する</label><br class="br">
-                    <input 
-                        type="radio" 
-                        name="object" 
-                        value="bookmarks" 
-                        id="object_bookmarks"
-                        <?= isset($_GET['object']) && $_GET['object'] === 'bookmarks' ? 'checked' : '' ?>
-                        disabled
-                    >
-                    <label for="object_bookmarks">ブックマーク一覧を取得する</label>
+                    <label for="<?= $key ?>"><?= $value ?>一覧を取得する</label><br class="br"> 
+                    <?php } ?>
                 </dd>
             </div>
             <div>

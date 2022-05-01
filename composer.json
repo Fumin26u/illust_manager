@@ -11,7 +11,8 @@
             "Database\\": "Database/",
             "Database\\Connection\\": "Database/Connection",
             "Database\\Reads\\": "Database/Reads",
-            "Database\\Posts\\": "Database/Posts"
+            "Database\\Posts\\": "Database/Posts",
+            "Values\\": "Values/"
         }
     }
 }
