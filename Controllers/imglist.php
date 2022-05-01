@@ -12,11 +12,12 @@ use \DateTime;
 
 class ImgList extends APIKey {
     private function setCurl($req) {
-        $BEARER_TOKEN = 'AAAAAAAAAAAAAAAAAAAAAOpSVQEAAAAAFCRrxMWTLcVmsMU5RF1S8uTJKQs%3D0Qpr1mfNOV9Ls3RvhmzOu2uwocMYpKKOrEtI9OZtpblpo4GmIi';
+        $bt = new APIKey();
+        $bearer_token = $bt->BEARER_TOKEN;
 
         // リクエストヘッダの作成
         $header = [
-            'Authorization: Bearer ' . $BEARER_TOKEN,
+            'Authorization: Bearer ' . $bearer_token,
             'Content-Type: application/json',
         ];
 
