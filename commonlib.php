@@ -1,5 +1,5 @@
 <?php
-// use database\Connection\DBInfo;
+// declare(strict_types = 1);
 require_once("system-conf.php");
 
 // タイムゾーン設定

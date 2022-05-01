@@ -3,17 +3,15 @@ $home = './';
 
 use Controllers\DLImages;
 use Controllers\ImgList;
-use Controllers\QueueMaking;
+use Controllers\MakeGetTweetsQuery;
 use Database\Posts\SetDLCount;
 use Database\Reads\LatestDL;
 use Database\Posts\SetLatestDL;
 use Values\TwitterObjects;
-// declare(strict_types = 1);
 
 $msg = [];
 $err = [];
 
-// require($home . '../apiset.php');
 require_once($home . '../commonlib.php');
 require_once($home . "../vendor/autoload.php");
 require('versions.php');
@@ -23,30 +21,37 @@ $is_login = isset($_SESSION['user_id']) ? true : false;
 
 // 送信ボタンが押された場合の処理
 if (isset($_GET['id']) && $_SERVER['REQUEST_METHOD'] === 'GET') {
+
     // $_GETのバリデーション処理
-    $q = new QueueMaking();
-    $query = $q->makeGetTweetsQueue($_GET);
+    $q = new MakeGetTweetsQuery();
+    $tweets_query = $q->makeGetTweetsQuery($_GET);
 
     // バリデーションでエラーが発生した場合APIを呼ばず処理を行う
-    if (isset($query[0]) && $query[0] === true) {
-        $err[] = $query[1];
-    } else {
+    if ($tweets_query['status'] === 'ERROR') {
+
+        $err[] = $tweets_query['content'];
+
+    } else if ($tweets_query['status'] === 'SUCCESS') {
+
         // 「前回保存した画像以降を取得」にチェックが入っている場合、DBからツイートIDを取得
         $d = new LatestDL();
         $latest_dl = isset($_GET['latest_dl']) ? $d->LatestDL(h($_GET['id'])) : '';
     
         // ツイート一覧を取得
         $l = new ImgList();
-        $_SESSION['tweets'] = $l->imgList($query, $latest_dl);
+        $_SESSION['tweets'] = $l->imgList($tweets_query['content'], $latest_dl);
         $tweets = $_SESSION['tweets'];
+
         // echo '<pre>';
         // v($_SESSION['tweets']);
         // echo '</pre>';
+
     }
 }
 
 // 保存ボタンが押された場合の処理
 if (isset($_POST['download']) && $_SERVER['REQUEST_METHOD'] === 'POST' && isset($_SESSION['tweets'])) {
+
     $tweets = $_SESSION['tweets'];
 
     // 画像をダウンロード
@@ -55,7 +60,9 @@ if (isset($_POST['download']) && $_SERVER['REQUEST_METHOD'] === 'POST' && isset(
 
     // ログインしている場合の処理
     if (isset($_SESSION['user_id'], $_SESSION['user_name'])) {
+
         try {
+
             // latest_dlテーブルの確認
             // 既にDB(latest_dlテーブル)に値がセットされているかどうか
             $d = new LatestDL();
