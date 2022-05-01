@@ -130,15 +130,50 @@ $canonical = "https://imagedler.com/";
             <div>
                 <dt>Twitter ID<em>*</em></dt>
                 <dd>
-                    <input type="text" name="id" value="<?= isset($_GET['id']) ? h($_GET['id']) : '' ?>" required> の
-                    <input type="radio" name="object" value="likes" id="object_likes" <?= (isset($_GET['object']) && $_GET['object'] === 'likes') || empty($_GET) ? 'checked' : '' ?>><label for="object_likes">いいね一覧を取得する</label> 
-                    <input type="radio" name="object" value="tweets" id="object_tweets" <?= isset($_GET['object']) && $_GET['object'] === 'tweets' ? 'checked' : '' ?>><label for="object_tweets">ツイート一覧を取得する</label> 
+                    <input 
+                        type="text" 
+                        name="id" 
+                        value="<?= isset($_GET['id']) ? h($_GET['id']) : '' ?>" 
+                        required
+                    >の<br class="br">
+                    <input 
+                        type="radio" 
+                        name="object" 
+                        value="likes" 
+                        id="object_likes" 
+                        <?= (isset($_GET['object']) && $_GET['object'] === 'likes') || empty($_GET) ? 'checked' : '' ?>
+                    >
+                    <label for="object_likes">いいね一覧を取得する</label><br class="br"> 
+                    <input 
+                        type="radio" 
+                        name="object" 
+                        value="tweets" 
+                        id="object_tweets"
+                        <?= isset($_GET['object']) && $_GET['object'] === 'tweets' ? 'checked' : '' ?>
+                    >
+                    <label for="object_tweets">ツイート一覧を取得する</label><br class="br">
+                    <input 
+                        type="radio" 
+                        name="object" 
+                        value="bookmarks" 
+                        id="object_bookmarks"
+                        <?= isset($_GET['object']) && $_GET['object'] === 'bookmarks' ? 'checked' : '' ?>
+                        disabled
+                    >
+                    <label for="object_bookmarks">ブックマーク一覧を取得する</label>
                 </dd>
             </div>
             <div>
                 <dt>取得ツイート数<em>*</em><br>(最大200)</dt>
                 <dd>
-                    <input type="number" name="count" value="<?= isset($_GET['count']) ? h($_GET['count']) : '100' ?>" max="200" min="10" step="10" required>
+                    <input 
+                        type="number" 
+                        name="count" 
+                        value="<?= isset($_GET['count']) ? h($_GET['count']) : '100' ?>" max="200" 
+                        min="10" 
+                        step="10" 
+                        required
+                    >
                 </dd>
             </div>
             <div>
