@@ -1,6 +1,8 @@
 <?php
 namespace Controllers;
 
+use Values\TwitterObjects;
+
 class QueueMaking {
 
     public function makeGetTweetsQueue(array $queue) {
@@ -23,7 +25,8 @@ class QueueMaking {
 
         // object
         // likes / tweets 以外の値が入っている場合エラー
-        if ($queue['object'] !== 'likes' && $queue['object'] !== 'tweets') {
+        // if ($queue['object'] !== 'likes' && $queue['object'] !== 'tweets' && $queue['object'] !== 'bookmarks') {
+        if (array_search($queue['object'], TwitterObjects::$TwitterObjects) !== false) {
             $err[] = 'どの一覧を取得するか指定してください。';
         } else {
             $values['object'] = h($queue['object']);

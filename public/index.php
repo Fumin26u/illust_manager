@@ -7,6 +7,7 @@ use Controllers\QueueMaking;
 use Database\Posts\SetDLCount;
 use Database\Reads\LatestDL;
 use Database\Posts\SetLatestDL;
+use Values\TwitterObjects;
 // declare(strict_types = 1);
 
 $msg = [];
@@ -130,15 +131,36 @@ $canonical = "https://imagedler.com/";
             <div>
                 <dt>Twitter ID<em>*</em></dt>
                 <dd>
-                    <input type="text" name="id" value="<?= isset($_GET['id']) ? h($_GET['id']) : '' ?>" required> の
-                    <input type="radio" name="object" value="likes" id="object_likes" <?= (isset($_GET['object']) && $_GET['object'] === 'likes') || empty($_GET) ? 'checked' : '' ?>><label for="object_likes">いいね一覧を取得する</label> 
-                    <input type="radio" name="object" value="tweets" id="object_tweets" <?= isset($_GET['object']) && $_GET['object'] === 'tweets' ? 'checked' : '' ?>><label for="object_tweets">ツイート一覧を取得する</label> 
+                    <input 
+                    type="text" 
+                    name="id" 
+                    value="<?= isset($_GET['id']) ? h($_GET['id']) : '' ?>" 
+                    required
+                    >の<br class="br">
+                    <?php foreach(TwitterObjects::$TwitterObjects as $key => $value) { ?>
+                    <input 
+                        type="radio" 
+                        name="object" 
+                        value="<?= $key ?>" 
+                        id="<?= $key ?>" 
+                        <?= (isset($_GET['object']) && $_GET['object'] === $key) || empty($_GET) && $key === 'liked_tweets' ? 'checked' : '' ?>
+                        <?= $key === 'bookmarks' ? 'disabled' : '' ?>
+                    >
+                    <label for="<?= $key ?>"><?= $value ?>一覧を取得する</label><br class="br"> 
+                    <?php } ?>
                 </dd>
             </div>
             <div>
                 <dt>取得ツイート数<em>*</em><br>(最大200)</dt>
                 <dd>
-                    <input type="number" name="count" value="<?= isset($_GET['count']) ? h($_GET['count']) : '100' ?>" max="200" min="10" step="10" required>
+                    <input 
+                        type="number" 
+                        name="count" 
+                        value="<?= isset($_GET['count']) ? h($_GET['count']) : '100' ?>" max="200" 
+                        min="10" 
+                        step="10" 
+                        required
+                    >
                 </dd>
             </div>
             <div>
