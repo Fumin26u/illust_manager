@@ -1,11 +1,3 @@
-apikey.php 
-gtag.inc
-system-conf.php
-SystemConfig.php 
-twimagedler.sql 
-vendor/*
-phpstan.neon
-
 ##### Windows
 # Windows thumbnail cache files
 Thumbs.db
@@ -480,3 +472,13 @@ composer.lock
 *.css.map
 *.sass.map
 *.scss.map
+
+# personal
+apikey.php 
+gtag.inc
+system-conf.php
+SystemConfig.php 
+DBPass.php
+twimagedler.sql 
+vendor/*
+phpstan.neon

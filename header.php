@@ -3,7 +3,7 @@
     <div class="header_left">
         <a href="<?= $home ?>">
             <div class="title">TwimageDLer</div>
-            <h1>"いいね"した画像の自動ダウンローダー</h1>
+            <h1>Twitterの画像自動ダウンローダー</h1>
         </a>
         <div class="link_area">
             <a href="<?= isset($_GET['id']) ? $home . 'index.php?' . $action : $home ?>#caution">注意事項</a>

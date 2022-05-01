@@ -29,7 +29,7 @@ class ImgList extends APIKey {
         return $curl;
     }
 
-	public function imgList(array $queue, string $latest_dl = '') {
+	public function imgList(array $queue, string $latest_dl = ''): array {
 		/* 
         params of $queue
 		id: Twitter ID

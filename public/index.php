@@ -33,7 +33,7 @@ if (isset($_GET['id']) && $_SERVER['REQUEST_METHOD'] === 'GET') {
     } else {
         // 「前回保存した画像以降を取得」にチェックが入っている場合、DBからツイートIDを取得
         $d = new LatestDL();
-        $latest_dl = $d->LatestDL();
+        $latest_dl = isset($_GET['latest_dl']) ? $d->LatestDL(h($_GET['id'])) : '';
     
         // ツイート一覧を取得
         $l = new ImgList();
@@ -59,11 +59,11 @@ if (isset($_POST['download']) && $_SERVER['REQUEST_METHOD'] === 'POST' && isset(
             // latest_dlテーブルの確認
             // 既にDB(latest_dlテーブル)に値がセットされているかどうか
             $d = new LatestDL();
-            $isset_latest_dl = $d->LatestDL();
+            $isset_latest_dl = isset($_GET['latest_dl']) ? $d->LatestDL(h($_GET['id'])) : '';
 
             // 期間指定の終了時刻の登録
             $s = new SetLatestDL();
-            $s->SetLatestDL($isset_latest_dl, $tweets[0]['post_id']);
+            $s->SetLatestDL($isset_latest_dl, $tweets[0]['post_id'], h($_GET['id']));
 
             // DL回数と保存した画像の総数を更新
             $s = new SetDLCount;
@@ -91,7 +91,7 @@ $nowTime = $today . 'T' . $now;
 
 // メタタグの整備
 // ページタイトルの設定
-$title = isset($_GET['id']) ? '@' . $_GET['id'] . 'のいいねツイート一覧 | TwimageDLer' : "TwimageDLer | \"いいね\"した画像の自動ダウンローダー";
+$title = isset($_GET['id']) ? '@' . $_GET['id'] . 'のいいねツイート一覧 | TwimageDLer' : "TwimageDLer | Twitterの画像自動ダウンローダー";
 
 // デスクリプション
 $description = "Twitterで自分が「いいね」をした画像を一括ダウンロードできるツールです。ユーザー登録を行うことにより、更に手軽にダウンロードを行うことができます。";
