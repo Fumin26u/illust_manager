@@ -8,13 +8,13 @@ use Database\Posts\SetDLCount;
 use Database\Reads\LatestDL;
 use Database\Posts\SetLatestDL;
 use Values\TwitterObjects;
+use Values\Versions;
 
 $msg = [];
 $err = [];
 
 require_once($home . '../commonlib.php');
 require_once($home . "../vendor/autoload.php");
-require('versions.php');
 
 // ログインしているかどうか
 $is_login = isset($_SESSION['user_id']) ? true : false;
@@ -242,7 +242,7 @@ $canonical = "https://imagedler.com/";
     <h3>更新履歴</h3>
     <small>スクロールできます</small>
     <dl class="form_list">
-        <?php foreach ($versions_log as $v) { ?>
+        <?php foreach (Versions::$versions_log as $v) { ?>
             <div>
                 <dt><?= $v['date'] ?></dt>
                 <dd>
