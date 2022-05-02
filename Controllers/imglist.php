@@ -1,11 +1,6 @@
 <?php
 namespace Controllers;
 
-// $home = './';
-// declare(strict_types = 1);
-
-// require_once($home . "../vendor/autoload.php");
-
 use Abraham\TwitterOAuth\TwitterOAuth;
 use Values\APIKey;
 use \DateTime;
