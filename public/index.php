@@ -151,7 +151,7 @@ $canonical = "https://imagedler.com/";
                         value="<?= $key ?>" 
                         id="<?= $key ?>" 
                         <?= (isset($_GET['object']) && $_GET['object'] === $key) || empty($_GET) && $key === 'liked_tweets' ? 'checked' : '' ?>
-                        <?= $key === 'bookmarks' ? 'disabled' : '' ?>
+                        <?= $key === 'bookmarks' ? '' : '' ?>
                     >
                     <label for="<?= $key ?>"><?= $value ?>一覧を取得する</label><br class="br"> 
                     <?php } ?>

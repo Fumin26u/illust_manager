@@ -6,6 +6,7 @@ use Values\APIKey;
 use \DateTime;
 
 class ImgList extends APIKey {
+
     private function setCurl($req) {
         $bt = new APIKey();
         $bearer_token = $bt->BEARER_TOKEN;
@@ -23,6 +24,37 @@ class ImgList extends APIKey {
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 
         return $curl;
+    }
+
+    private function get_bearer_token() {
+        $ci = new APIKey();
+        $bearer_token = $ci->BEARER_TOKEN;
+        
+        $endPoint = 'https://api.twitter.com/oauth2/token';
+        $query = [
+            'response_type' => 'code',
+            'client_id' => $ci->CLIENT_ID,
+            'redirect_uri' => 'https://twitter.com/',
+            'scope' => 'tweet.read+like.read+bookmark.read',
+
+        ];
+
+        $header = [
+            'Authorization: Bearer ' . $bearer_token,
+            'Content-Type: application/json',
+        ];
+        
+        $curl = curl_init();
+        $url = $endPoint . '?' . http_build_query($query);
+        curl_setopt($curl, CURLOPT_URL, $url);
+        curl_setopt($curl, CURLOPT_CUSTOMREQUEST, 'GET');
+        curl_setopt($curl, CURLOPT_HTTPHEADER, $header);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+
+        $response = curl_exec($curl);
+        $bearer_token = json_decode($response);
+
+        return $bearer_token;
     }
 
 	public function imgList(array $queue, string $latest_dl = ''): array {
