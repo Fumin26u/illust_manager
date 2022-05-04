@@ -34,7 +34,6 @@ class ImgList extends APIKey {
         object: いいね・ツイート どちらの一覧を取得するか
         using_term: (ツイート一覧を取得する場合のみ) チェックが入っている場合日付、入ってない場合False
         */
-
         // Connect to TwitterOAuth
         $api_key = new APIKey;
         $connection = new TwitterOAuth($api_key->API_KEY, $api_key->API_KEY_SECRET, $api_key->ACCESS_TOKEN, $api_key->ACCESS_TOKEN_SECRET);
