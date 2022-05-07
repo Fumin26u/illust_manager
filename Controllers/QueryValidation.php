@@ -3,9 +3,9 @@ namespace Controllers;
 
 use Values\TwitterObjects;
 
-class MakeGetTweetsQuery {
+class QueryValidation {
 
-    public function makeGetTweetsQuery(array $query) {
+    public function queryValidation(array $query) {
 
         $values = [];
         $err = [];

@@ -3,7 +3,7 @@ $home = './';
 
 use Controllers\DLImages;
 use Controllers\ImgList;
-use Controllers\MakeGetTweetsQuery;
+use Controllers\QueryValidation;
 use Database\Posts\SetDLCount;
 use Database\Reads\LatestDL;
 use Database\Posts\SetLatestDL;
@@ -23,8 +23,9 @@ $is_login = isset($_SESSION['user_id']) ? true : false;
 if (isset($_GET['id']) && $_SERVER['REQUEST_METHOD'] === 'GET') {
 
     // $_GETのバリデーション処理
-    $q = new MakeGetTweetsQuery();
-    $tweets_query = $q->makeGetTweetsQuery($_GET);
+    $q = new QueryValidation();
+    $tweets_query = $q->queryValidation($_GET);
+    // $tweets = new GetTweets($_GET);
 
     // バリデーションでエラーが発生した場合APIを呼ばず処理を行う
     if ($tweets_query['status'] === 'ERROR') {
