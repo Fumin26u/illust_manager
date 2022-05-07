@@ -5,7 +5,7 @@ use Abraham\TwitterOAuth\TwitterOAuth;
 use Values\APIKey;
 use \DateTime;
 
-class ImgList extends APIKey {
+class GetTweets extends APIKey {
     private function setCurl($req) {
         $bt = new APIKey();
         $bearer_token = $bt->BEARER_TOKEN;
@@ -25,7 +25,7 @@ class ImgList extends APIKey {
         return $curl;
     }
 
-	public function imgList(array $queue, string $latest_dl = ''): array {
+	public function getTweets(array $queue, string $latest_dl = ''): array {
 		/* 
         params of $queue
 		id: Twitter ID

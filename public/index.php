@@ -2,7 +2,7 @@
 $home = './';
 
 use Controllers\DLImages;
-use Controllers\ImgList;
+use Controllers\GetTweets;
 use Controllers\QueryValidation;
 use Database\Posts\SetDLCount;
 use Database\Reads\LatestDL;
@@ -39,8 +39,8 @@ if (isset($_GET['id']) && $_SERVER['REQUEST_METHOD'] === 'GET') {
         $latest_dl = isset($_GET['latest_dl']) ? $d->LatestDL(h($_GET['id'])) : '';
     
         // ツイート一覧を取得
-        $l = new ImgList();
-        $_SESSION['tweets'] = $l->imgList($tweets_query['content'], $latest_dl);
+        $l = new GetTweets();
+        $_SESSION['tweets'] = $l->getTweets($tweets_query['content'], $latest_dl);
         $tweets = $_SESSION['tweets'];
 
         // echo '<pre>';
