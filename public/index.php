@@ -53,41 +53,52 @@ if (isset($_GET['id']) && $_SERVER['REQUEST_METHOD'] === 'GET') {
 // 保存ボタンが押された場合の処理
 if (isset($_POST['download']) && $_SERVER['REQUEST_METHOD'] === 'POST' && isset($_SESSION['tweets'])) {
 
-    $tweets = $_SESSION['tweets'];
+    if ($_SESSION['cToken'] !== $_POST['cToken']) {
 
-    // 画像をダウンロード
-    $dlImages = new DLImages;
-    $images_count = $dlImages->DLImages($tweets);
+        $msg[] = '不正なアクセスが行われました';
 
-    // ログインしている場合の処理
-    if (isset($_SESSION['user_id'], $_SESSION['user_name'])) {
+    } else {
 
-        try {
-
-            // latest_dlテーブルの確認
-            // 既にDB(latest_dlテーブル)に値がセットされているかどうか
-            $d = new LatestDL();
-            $isset_latest_dl = isset($_GET['latest_dl']) ? $d->LatestDL(h($_GET['id'])) : '';
-
-            // 期間指定の終了時刻の登録
-            $s = new SetLatestDL();
-            $s->SetLatestDL($isset_latest_dl, $tweets[0]['post_id'], h($_GET['id']));
-
-            // DL回数と保存した画像の総数を更新
-            $s = new SetDLCount;
-            $s->SetDLCount($images_count);
-
-        } catch (PDOException $e) {
-            echo 'データベース接続に失敗しました';
-            if (DEBUG) {
-                echo $e;
+        $tweets = $_SESSION['tweets'];
+    
+        // 画像をダウンロード
+        $dlImages = new DLImages;
+        $images_count = $dlImages->DLImages($tweets);
+    
+        // ログインしている場合の処理
+        if (isset($_SESSION['user_id'], $_SESSION['user_name'])) {
+    
+            try {
+    
+                // latest_dlテーブルの確認
+                // 既にDB(latest_dlテーブル)に値がセットされているかどうか
+                $d = new LatestDL();
+                $isset_latest_dl = isset($_GET['latest_dl']) ? $d->LatestDL(h($_GET['id'])) : '';
+    
+                // 期間指定の終了時刻の登録
+                $s = new SetLatestDL();
+                $s->SetLatestDL($isset_latest_dl, $tweets[0]['post_id'], h($_GET['id']));
+    
+                // DL回数と保存した画像の総数を更新
+                $s = new SetDLCount;
+                $s->SetDLCount($images_count);
+    
+            } catch (PDOException $e) {
+                echo 'データベース接続に失敗しました';
+                if (DEBUG) {
+                    echo $e;
+                }
             }
         }
+    
+        // セッションに一時保存したツイート情報を破棄
+        $_SESSION['tweets'] = null;
     }
-
-    // セッションに一時保存したツイート情報を破棄
-    $_SESSION['tweets'] = null;
 }
+
+// csrf対策
+$cToken = bin2hex(random_bytes(32));
+$_SESSION['cToken'] = $cToken;
 
 // 現在時刻を生成
 $t = new DateTime();
@@ -213,6 +224,7 @@ $canonical = "https://imagedler.com/";
 <div class="download_area">
     <p>[保存]ボタンを押すと、ダウンロードフォルダにZipファイルで保存されます。</p>
     <form action="" method="POST">
+    <input type="hidden" name="cToken" value="<?= $cToken ?>">
     <input type="submit" name="download" value="保存">
     </form>
 </div>
