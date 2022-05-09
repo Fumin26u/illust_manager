@@ -194,20 +194,22 @@ $canonical = "https://imagedler.com/";
                     >
                     <label for="latest_dl">前回保存した画像以降を取得</label><br>
                     <?php } ?>
-                    <input
-                        type="checkbox"
-                        name="using_term"
-                        id="using_term"
-                        <?= !$is_login || isset($_GET['using_term']) ? 'checked' : '' ?>
-                    >
-                    <label for="using_term">期間指定を行う</label>
-                    <input 
-                        type="datetime-local" 
-                        name="ed_time" 
-                        value="<?= isset($_GET['ed_time']) ? h($_GET['ed_time']) : $nowTime ?>" 
-                        <?= !$is_login ? ' required' : '' ?>
-                    >
-                    まで
+                    <div id="using_term_area">
+                        <input
+                            type="checkbox"
+                            name="using_term"
+                            id="using_term"
+                            <?= !$is_login || isset($_GET['using_term']) ? 'checked' : '' ?>
+                        >
+                        <label for="using_term">期間指定を行う</label>
+                        <input 
+                            type="datetime-local" 
+                            name="ed_time" 
+                            value="<?= isset($_GET['ed_time']) ? h($_GET['ed_time']) : $nowTime ?>" 
+                            <?= !$is_login ? ' required' : '' ?>
+                        >
+                        まで
+                    </div>
                 </dd>
             </div>
         </dl>      
