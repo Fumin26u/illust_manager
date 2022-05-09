@@ -15,7 +15,7 @@ class Signup extends SignupValidation {
 
 	}
 
-	public function submitUser() {
+	public function submitUser(): array {
 		$err = [];
 
 		$validation = new SignupValidation(h($this->post['password']), h($this->post['confirm']));
