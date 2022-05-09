@@ -2,8 +2,8 @@
 $home = './';
 
 use Controllers\DLImages;
-use Controllers\ImgList;
-use Controllers\MakeGetTweetsQuery;
+use Controllers\GetTweets;
+use Controllers\QueryValidation;
 use Database\Posts\SetDLCount;
 use Database\Reads\LatestDL;
 use Database\Posts\SetLatestDL;
@@ -23,8 +23,9 @@ $is_login = isset($_SESSION['user_id']) ? true : false;
 if (isset($_GET['id']) && $_SERVER['REQUEST_METHOD'] === 'GET') {
 
     // $_GETのバリデーション処理
-    $q = new MakeGetTweetsQuery();
-    $tweets_query = $q->makeGetTweetsQuery($_GET);
+    $q = new QueryValidation();
+    $tweets_query = $q->queryValidation($_GET);
+    // $tweets = new GetTweets($_GET);
 
     // バリデーションでエラーが発生した場合APIを呼ばず処理を行う
     if ($tweets_query['status'] === 'ERROR') {
@@ -38,8 +39,8 @@ if (isset($_GET['id']) && $_SERVER['REQUEST_METHOD'] === 'GET') {
         $latest_dl = isset($_GET['latest_dl']) ? $d->LatestDL(h($_GET['id'])) : '';
     
         // ツイート一覧を取得
-        $l = new ImgList();
-        $_SESSION['tweets'] = $l->imgList($tweets_query['content'], $latest_dl);
+        $l = new GetTweets();
+        $_SESSION['tweets'] = $l->getTweets($tweets_query['content'], $latest_dl);
         $tweets = $_SESSION['tweets'];
 
         // echo '<pre>';
