@@ -1,50 +1,35 @@
 <?php
+
+use Database\Posts\Login;
+
 $home ='../';
 $login = true;
 
 require_once($home . '../commonlib.php');
+require_once($home . "../vendor/autoload.php");
 
 $msg = [];
+$err = [];
 
-try {
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-    $pdo = dbConnect();
+    $login = new Login($_POST);
+    $err += $login->login();
 
-    $err = [];
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (empty($err)) {
+        // 上記エラーが無い場合、セッションにユーザ名とプレミアム会員判定を挿入
+        session_start();
 
-        // user_nameからユーザ情報を取得
-        $st = $pdo->prepare('SELECT user_id, user_name, password, premium FROM user WHERE user_name = :user_name AND is_auth = TRUE');
-        $st->bindValue(':user_name', h($_POST['user_name']), PDO::PARAM_STR);
-        // $st->bindValue(':password', $pass_hash, PDO::PARAM_STR);
-        $st->execute();
+        $_SESSION['user_id'] = $rows['user_id'];
+        $_SESSION['user_name'] = $rows['user_name'];
+        $_SESSION['premium'] = $rows['premium'];
 
-        $rows = $st->fetch(PDO::FETCH_ASSOC);
-        // 返された配列が空の場合、ユーザ名が存在しない
-        if (empty($rows)) {
-            $err[] = '入力されたユーザー名は存在しません。';
-        // パスワードの照合
-        } else if(!password_verify(h($_POST['password']), $rows['password'])) {
-            $err[] = '入力されたパスワードが間違っています。';
-        } else {
-            // 上記エラーが無い場合、セッションにユーザ名とプレミアム会員判定を挿入
-            session_start();
-
-            $_SESSION['user_id'] = $rows['user_id'];
-            $_SESSION['user_name'] = $rows['user_name'];
-            $_SESSION['premium'] = $rows['premium'];
-
-            // トップページにリダイレクト
-            header('location: ../', true, 303);
-        }
+        // トップページにリダイレクト
+        header('location: ../', true, 303);
     }
-
-    $msg += $err;
-
-} catch (PDOException $e) {
-    echo 'データベース接続に失敗しました。';
-    if (DEBUG) echo $e;
 }
+
+$msg += $err;
 
 $title = 'ログイン | TwimageDLer';
 ?>

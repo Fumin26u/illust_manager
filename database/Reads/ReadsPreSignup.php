@@ -27,7 +27,7 @@ class ReadsPreSignup {
 			$pdo = dbConnect();
 
 			$st = $pdo->prepare('SELECT email, req_time FROM user_pre WHERE token = :token');
-			$st->bindValue(':token', $this ->token, PDO::PARAM_STR);
+			$st->bindValue(':token', $this->token, PDO::PARAM_STR);
 			$st->execute();
 
 			$res = $st->fetchAll(PDO::FETCH_ASSOC);
