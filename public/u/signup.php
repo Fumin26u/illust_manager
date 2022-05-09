@@ -1,6 +1,10 @@
 <?php
+
+use Database\Reads\ReadsPreSignup;
+
 $home ='../';
 require_once($home . '../commonlib.php');
+require_once($home . "../vendor/autoload.php");
 
 $msg = [];
 
@@ -58,36 +62,38 @@ SQL;
     }
 
     // URL引数tが設定されていないまたは空の場合false
-    if (!isset($_GET['t']) || $_GET['t'] == '') {
-        $is_proper_access = false;
-    } else {
+    // if (!isset($_GET['t']) || $_GET['t'] == '') {
+    //     $is_proper_access = false;
+    // } else {
 
-        $token = h($_GET['t']);
+    //     $token = h($_GET['t']);
 
-        // トークンの整合
-        $st = $pdo->prepare('SELECT email, req_time FROM user_pre WHERE token = :token');
-        $st->bindValue(':token', $token, PDO::PARAM_STR);
-        $st->execute();
+    //     // トークンの整合
+    //     $st = $pdo->prepare('SELECT email, req_time FROM user_pre WHERE token = :token');
+    //     $st->bindValue(':token', $token, PDO::PARAM_STR);
+    //     $st->execute();
 
-        $res = $st->fetchAll(PDO::FETCH_ASSOC);
-        // 指定されたトークンがDBに無い場合false
-        if (empty($res)) {
-            $is_proper_access = false;
-        } else {
-            $date_db = $res[0]['req_time'];
+    //     $res = $st->fetchAll(PDO::FETCH_ASSOC);
+    //     // 指定されたトークンがDBに無い場合false
+    //     if (empty($res)) {
+    //         $is_proper_access = false;
+    //     } else {
+    //         $date_db = $res[0]['req_time'];
 
-            // 今の時刻とDBに登録されている時刻を比較する
-            $d = new DateTime();
-            $date = $d->modify('-1 Hour')->format('Y-m-d H:i:s');
+    //         // 今の時刻とDBに登録されている時刻を比較する
+    //         $d = new DateTime();
+    //         $date = $d->modify('-1 Hour')->format('Y-m-d H:i:s');
 
-            // 今の時刻 - 1時間がDBに登録されている時刻より遅い場合false
-            if ($date > $date_db) {
-                $is_proper_access = false;
-            } else {
-                $email = h($res[0]['email']);
-            }
-        }
-    }
+    //         // 今の時刻 - 1時間がDBに登録されている時刻より遅い場合false
+    //         if ($date > $date_db) {
+    //             $is_proper_access = false;
+    //         } else {
+    //             $email = h($res[0]['email']);
+    //         }
+    //     }
+    // }
+    $preSignup = new ReadsPreSignup($_GET);
+    $preEmail = $preSignup->readsPreSignup();
 
     $msg += $err;
 
@@ -112,7 +118,7 @@ $title = 'ユーザー登録 | TwimageDLer';
 <?php include_once($home . '../header.php') ?>
 <main>
 <h2>ユーザー登録</h2>
-<?php if (!$is_proper_access) { ?>
+<?php if ($preEmail === false) { ?>
 <div class="description improper">
     <p>この文章が表示されている場合、不適切なアクセスまたはメールアドレスに送付したリンクの有効期限切れとなります。</p>
     <p>お手数ですが、再度確認メールの送付手続きを行って下さい。</p>
