@@ -5,8 +5,14 @@ $msg = [];
 
 // メール送信
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $email = isset($_POST['email']) && $_POST['email'] !== '' ? h($_POST['email']) : '記載なし';
-    $mail_content = <<<EOM
+    if ($_SESSION['cToken'] !== $_POST['cToken']) {
+
+        $msg[] = '不正なアクセスが行われました';
+
+    } else {
+        
+        $email = isset($_POST['email']) && $_POST['email'] !== '' ? h($_POST['email']) : '記載なし';
+        $mail_content = <<<EOM
 
 ＝＝＝＝＝＝＝＝＝＝お問い合わせを受信しました＝＝＝＝＝＝＝＝＝＝
 
@@ -25,28 +31,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 {$_POST['content']}
 
 EOM;
-
-        // メール送信の実行
-        $to = 'tosufumiya0719@gmail.com';
-        // $from = isset($_POST['email']) && $_POST['email'] !== '' ? h($_POST['email']) : h($_POST['name']);
-        $from = 'no-reply@twimagedler.com';
-
-        // メールヘッダ
-        $header = 'From: ' . mb_encode_mimeheader('TwimageDLer', 'UTF-8') . '<' . $from . '>';
-
-        // タイトル
-        $title = '【お問い合わせを受信しました】| TwimageDLer';
-
-        // 本文
-        $message = '';
-        $message .= brReplace(periodReplace($mail_content));
-
-        // 送信＋判定
-        $is_sent_mail = mb_send_mail($to, $title, $message, $header);
-
-    // メールアドレスがセットされていた場合、そのメールアドレス宛に通知を送信
-    if (isset($_POST['email']) && $_POST['email'] !== '') {
-        $mail_content = <<<EOM
+            // メール送信の実行
+            $to = 'tosufumiya0719@gmail.com';
+            // $from = isset($_POST['email']) && $_POST['email'] !== '' ? h($_POST['email']) : h($_POST['name']);
+            $from = 'no-reply@twimagedler.com';
+    
+            // メールヘッダ
+            $header = 'From: ' . mb_encode_mimeheader('TwimageDLer', 'UTF-8') . '<' . $from . '>';
+    
+            // タイトル
+            $title = '【お問い合わせを受信しました】| TwimageDLer';
+    
+            // 本文
+            $message = '';
+            $message .= brReplace(periodReplace($mail_content));
+    
+            // 送信＋判定
+            $is_sent_mail = mb_send_mail($to, $title, $message, $header);
+    
+        // メールアドレスがセットされていた場合、そのメールアドレス宛に通知を送信
+        if (isset($_POST['email']) && $_POST['email'] !== '') {
+            $mail_content = <<<EOM
 
 ＝＝＝＝＝＝＝＝＝＝お問い合わせ完了通知＝＝＝＝＝＝＝＝＝＝
 
@@ -68,31 +73,34 @@ TwimageDLerのご利用ありがとうございます。
 本メールは送信専用です。返信は受付できませんのでご了承ください。
 
 EOM;
-
-        // メール送信の実行
-        $to = $email;
-        $from = 'no-reply@twimagedler.com';
-
-        // メールヘッダ
-        $header = 'From: ' . mb_encode_mimeheader('TwimageDLer', 'UTF-8') . '<' . $from . '>';
-
-        // タイトル
-        $title = '【お問い合わせ完了通知】| TwimageDLer';
-
-        // 本文
-        $message = '';
-        $message .= brReplace(periodReplace($mail_content));
-
-        // 送信＋判定
-        $is_sent_mail = mb_send_mail($to, $title, $message, $header);
-    }
-
-    if ($is_sent_mail) {
-        $msg[] = 'メールを送信しました。';
-    } else {
-        $msg[] = 'メール送信に失敗しました。お手数ですが、時間を置いて再度お試しいただけますようよろしくお願いします。';
+            // メール送信の実行
+            $to = $email;
+            $from = 'no-reply@twimagedler.com';
+    
+            // メールヘッダ
+            $header = 'From: ' . mb_encode_mimeheader('TwimageDLer', 'UTF-8') . '<' . $from . '>';
+    
+            // タイトル
+            $title = '【お問い合わせ完了通知】| TwimageDLer';
+    
+            // 本文
+            $message = '';
+            $message .= brReplace(periodReplace($mail_content));
+    
+            // 送信＋判定
+            $is_sent_mail = mb_send_mail($to, $title, $message, $header);
+        }
+    
+        if ($is_sent_mail) {
+            $msg[] = 'メールを送信しました。';
+        } else {
+            $msg[] = 'メール送信に失敗しました。お手数ですが、時間を置いて再度お試しいただけますようよろしくお願いします。';
+        }
     }
 }
+
+$cToken = bin2hex(random_bytes(32));
+$_SESSION['cToken'] = $cToken;
 
 $title = "お問い合わせ | TwimageDLer";
 $canonical = "https://imagedler.com/mail/";
@@ -168,6 +176,7 @@ if (isset($_POST['name'])) $name = h($_POST['name']);
             <dd><textarea name="content"><?= isset($_POST['content']) ? h($_POST['content']) : '' ?></textarea></dd>
         </div>
     </dl>
+    <input type="hidden" name="cToken" value="<?= $cToken ?>">
     <input type="submit" value="送信">
 </form>
 </main>
