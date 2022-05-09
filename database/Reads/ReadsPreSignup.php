@@ -20,11 +20,7 @@ class ReadsPreSignup {
 
 		$preEmail = '';
 
-		if (!isset($this->get['t']) || $this->get['t'] === '') {
-
-			$preEmail = false;
-
-		} else {
+		if (isset($this->get['t']) && $this->get['t'] !== '') {
 
 			$this->token = h($this->get['t']);
 
@@ -38,11 +34,7 @@ class ReadsPreSignup {
 			$pdo = null;
 
 			// 指定されたトークンがDBに無い場合false
-			if (empty($res)) {
-
-				$preEmail = false;
-
-			} else {
+			if (!empty($res)) {
 
 				$date_db = $res[0]['req_time'];
 
@@ -50,21 +42,12 @@ class ReadsPreSignup {
 				$d = new DateTime();
 				$date = $d->modify('-1 Hour')->format('Y-m-d H:i:s');
 
-				// 今の時刻 - 1時間がDBに登録されている時刻より遅い場合false
-				if ($date > $date_db) {
-
-					$preEmail = false;
-
-				} else {
-
-					$preEmail = h($res[0]['email']);
-
-				}
+				// 今の時刻 - 1時間がDBに登録されている時刻より早ければメアドを登録
+				if ($date < $date_db) $preEmail = h($res[0]['email']);
 
 			}
 
 		}
-
 
 		return $preEmail;
 

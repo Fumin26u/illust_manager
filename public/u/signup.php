@@ -1,5 +1,6 @@
 <?php
 
+use Database\Posts\Signup;
 use Database\Reads\ReadsPreSignup;
 
 $home ='../';
@@ -10,99 +11,42 @@ $msg = [];
 
 // 適切なアクセスかどうか(TRUE = 適切、 FALSE = 不適切)
 $is_proper_access = true;
+// 本登録されたかどうか
+$is_submitted = false;
 
-try {
+// データがPOSTされた際の処理
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
-    $pdo = dbConnect();
+    if ($_SESSION['cToken'] !== $_POST['cToken']) {
 
-    $err = [];
-    $is_submitted = false;
-    // データがPOSTされた際の処理
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $msg[] = '不正なアクセスが行われました';
 
-        // パスワードの同値チェック
-        if (h($_POST['password']) !== h($_POST['confirm'])) {
-            $err[] = '入力されたパスワードが一致しません。';
-        } else {
-        // IDが既に使用されているかチェック
-            $st = $pdo->query('SELECT user_name FROM user');
-            $rows = $st->fetchAll(PDO::FETCH_ASSOC);
-            if (array_search($_POST['user_name'], $rows) !== false) {
-                $err[] = '既に使用されているIDです。';
-            }
-        }
+    } else {
 
-        // 上記エラーが無い場合、入力データを登録
-        if (empty($err)) {
-
-            $pdo->beginTransaction();
-
-            $sql = <<<SQL
-INSERT INTO user (
-    user_name, password, email, premium, is_auth, created_at
-) VALUES (
-    :user_name, :password, :email, 'N', TRUE, NOW()
-)
-SQL;
-            $st = $pdo->prepare($sql);
-            $st->bindValue(':user_name', h($_POST['user_name']), PDO::PARAM_STR);    
-            $st->bindValue(':password', password_hash(h($_POST['password']), PASSWORD_DEFAULT), PDO::PARAM_STR);
-            $st->bindValue(':email', h($_POST['email']), PDO::PARAM_STR);
-            $st->execute();
-
-            // 仮ユーザテーブルの本登録かどうかをTRUEに変更
-            $st = $pdo->prepare('UPDATE user_pre SET is_submitted = TRUE WHERE email = :email');
-            $st->bindValue(':email', h($_POST['email']), PDO::PARAM_STR);
-            $st->execute();
-
-            $pdo->commit();
-            $msg[] = '登録しました。';
+        $submitUser = new Signup($_POST);
+        $signup_err = $submitUser->submitUser();
+    
+        if (empty($signup_err)) {
             $is_submitted = true;
+        } else {
+            $msg += $signup_err;
         }
+
     }
 
-    // URL引数tが設定されていないまたは空の場合false
-    // if (!isset($_GET['t']) || $_GET['t'] == '') {
-    //     $is_proper_access = false;
-    // } else {
-
-    //     $token = h($_GET['t']);
-
-    //     // トークンの整合
-    //     $st = $pdo->prepare('SELECT email, req_time FROM user_pre WHERE token = :token');
-    //     $st->bindValue(':token', $token, PDO::PARAM_STR);
-    //     $st->execute();
-
-    //     $res = $st->fetchAll(PDO::FETCH_ASSOC);
-    //     // 指定されたトークンがDBに無い場合false
-    //     if (empty($res)) {
-    //         $is_proper_access = false;
-    //     } else {
-    //         $date_db = $res[0]['req_time'];
-
-    //         // 今の時刻とDBに登録されている時刻を比較する
-    //         $d = new DateTime();
-    //         $date = $d->modify('-1 Hour')->format('Y-m-d H:i:s');
-
-    //         // 今の時刻 - 1時間がDBに登録されている時刻より遅い場合false
-    //         if ($date > $date_db) {
-    //             $is_proper_access = false;
-    //         } else {
-    //             $email = h($res[0]['email']);
-    //         }
-    //     }
-    // }
-    $preSignup = new ReadsPreSignup($_GET);
-    $email = $preSignup->readsPreSignup();
-
-    $msg += $err;
-
-} catch (PDOException $e) {
-    echo 'データベースの接続に失敗しました。';
-    if (DEBUG) {
-        echo $e;
-    }
 }
+
+// 仮登録データの読み込み
+$preSignup = new ReadsPreSignup($_GET);
+$email = $preSignup->readsPreSignup();
+if ($email === '') {
+    $is_proper_access = false;
+} else {
+    $token = h($_GET['t']);
+}
+
+$cToken = bin2hex(random_bytes(32));
+$_SESSION['cToken'] = $cToken;
 
 $title = 'ユーザー登録 | TwimageDLer';
 ?>
@@ -118,7 +62,7 @@ $title = 'ユーザー登録 | TwimageDLer';
 <?php include_once($home . '../header.php') ?>
 <main>
 <h2>ユーザー登録</h2>
-<?php if ($email === false) { ?>
+<?php if (!$is_proper_access) { ?>
 <div class="description improper">
     <p>この文章が表示されている場合、不適切なアクセスまたはメールアドレスに送付したリンクの有効期限切れとなります。</p>
     <p>お手数ですが、再度確認メールの送付手続きを行って下さい。</p>
@@ -173,7 +117,7 @@ $title = 'ユーザー登録 | TwimageDLer';
             </dd>
         </div>
     </dl>
-    <input type="hidden" name="ctoken" value="<?= $cToken ?>">
+    <input type="hidden" name="cToken" value="<?= $cToken ?>">
     <input type="submit" value="登録">
 </form>
 <?php } else { ?>
