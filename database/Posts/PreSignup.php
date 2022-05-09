@@ -3,10 +3,12 @@ namespace Database\Posts;
 
 use \PDO;
 use PDOException;
+use Mail\PreSignupMail;
 
-class PreSignup {
+class PreSignup extends PreSignupMail {
 
 	private array $post;
+	private string $email;
 
 	private function __construct(array $post) {
 
@@ -18,18 +20,18 @@ class PreSignup {
 
 		$err = [];
 
-		if (empty($this->post['email'])) {
+		if (!isset($this->post['email'])) {
 
 			$err[] = 'メールアドレスを入力してください。';
 
 		} else {
 
-			$email = h($this->post['email']);
+			$this->email = h($this->post['email']);
 
 		}
     
         // メールアドレスが正しい形式かどうか
-        if (!preg_match("/^([a-zA-Z0-9])+([a-zA-Z0-9\._-])*@([a-zA-Z0-9_-])+([a-zA-Z0-9\._-]+)+$/", $email)) {
+        if (!preg_match("/^([a-zA-Z0-9])+([a-zA-Z0-9\._-])*@([a-zA-Z0-9_-])+([a-zA-Z0-9\._-]+)+$/", $this->email)) {
 
             $err[] = '不正なメールアドレスの形式です。';
 
@@ -40,7 +42,7 @@ class PreSignup {
 
             $sql = "SELECT user_id FROM user WHERE email = :email";
             $st = $pdo->prepare($sql);
-            $st->bindValue(':email', $email, PDO::PARAM_STR);
+            $st->bindValue(':email', $this->email, PDO::PARAM_STR);
             $st->execute();
     
             $res = $st->fetchAll(PDO::FETCH_ASSOC);
@@ -61,8 +63,6 @@ class PreSignup {
 		$err = $this->postValidation();
 		
 		if (empty($err)) {
-
-			$email = $this->post['email'];
 			
 			$token = hash('sha256', uniqid(rand(), TRUE));
 			$url = 'https://imagedler.com/u/signup.php?t=';
@@ -74,7 +74,7 @@ class PreSignup {
 				$pdo->beginTransaction();
 				
 				$st = $pdo->prepare('SELECT user_id FROM user_pre WHERE email = :email');
-				$st->bindValue(':email', $email, PDO::PARAM_STR);
+				$st->bindValue(':email', $this->email, PDO::PARAM_STR);
 				$st->execute();
 				
 				$res = $st->fetch(PDO::FETCH_ASSOC);
@@ -89,7 +89,7 @@ class PreSignup {
 	
 				$st = $pdo->prepare($sql);
 				$st->bindValue(':token', $token, PDO::PARAM_STR);
-				$st->bindValue(':email', $email, PDO::PARAM_STR);
+				$st->bindValue(':email', $this->email, PDO::PARAM_STR);
 				$st->execute();
 		
 				$pdo->commit();
@@ -97,7 +97,9 @@ class PreSignup {
 
 			} catch(PDOException $e) {
 
-				$err[] = $e;
+				if (DEBUG) echo $e;
+
+				$err[] = '仮登録に失敗しました。お手数ですが、時間を置いて再度お試しいただけますようよろしくお願いします。';
 
 			}
 
