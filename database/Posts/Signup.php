@@ -21,10 +21,7 @@ class Signup extends SignupValidation {
 		$validation = new SignupValidation(h($this->post['password']), h($this->post['confirm']));
 		$validation_err = $validation->signupValidation();
 
-		v($this->post['confirm']);
-		exit;
-
-		if (!empty($err)) {
+		if (!empty($validation_err)) {
 
 			$err += $validation_err;
 

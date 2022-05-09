@@ -17,6 +17,8 @@ class SignupValidation {
 
 	protected function signupValidation(): array {
 
+		$err = [];
+
 		// パスワードの同値チェック
 		if ($this->password !== $this->confirm) {
 
