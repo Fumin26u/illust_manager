@@ -3,7 +3,7 @@ namespace Mail;
 
 class PreSignupMail {
 
-	public function SendPreSignupMail(string $email, string $signup_url) {
+	public function SendPreSignupMail(string $email, string $signup_url): string {
 
 		$mail_content = <<<EOM
 
@@ -36,11 +36,13 @@ EOM;
 		$is_sent_mail = mb_send_mail($to, $title, $message, $header);
 	
 		if ($is_sent_mail) {
-			$msg[] = '仮登録通知を送信しました。';
+			$msg = '仮登録通知を送信しました。';
 		} else {
-			$msg[] = 'メール送信に失敗しました。お手数ですが、時間を置いて再度お試しいただけますようよろしくお願いします。';
+			$msg = 'メール送信に失敗しました。お手数ですが、時間を置いて再度お試しいただけますようよろしくお願いします。';
 		}
-		
+
+		return $msg;
+
 	}
 
 }

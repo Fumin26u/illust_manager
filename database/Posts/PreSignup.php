@@ -10,7 +10,7 @@ class PreSignup extends PreSignupMail {
 	private array $post;
 	private string $email;
 
-	private function __construct(array $post) {
+	public function __construct(array $post) {
 
 		$this->post = $post;
 
@@ -56,11 +56,12 @@ class PreSignup extends PreSignupMail {
 
 	}
 
-	public function preSubmitAccount() {
+	public function preSubmitAccount(): array {
 
 		$is_submitted_db = false;
 		
 		$err = $this->postValidation();
+		$msg = [];
 		
 		if (empty($err)) {
 			
@@ -105,9 +106,19 @@ class PreSignup extends PreSignupMail {
 
 		}
 
+		v($is_submitted_db);
+		exit;
+
 		if ($is_submitted_db) {
-			
-		}
+
+			$msg[] = PreSignupMail::SendPreSignupMail($this->mail, $signup_url);
+			return $msg;
+
+		} else {
+
+			return $err;
+
+		}	
 
 	}
 }
