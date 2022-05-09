@@ -108,7 +108,7 @@ class PreSignup extends PreSignupMail {
 
 		if ($is_submitted_db) {
 
-			$msg[] = PreSignupMail::SendPreSignupMail($this->mail, $signup_url);
+			$msg[] = PreSignupMail::SendPreSignupMail($this->email, $signup_url);
 			return $msg;
 
 		} else {

@@ -11,9 +11,16 @@ require_once($home . "../vendor/autoload.php");
 $url = 'https://imagedler.com/u/signup.php?t=';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $signup = new PreSignup($_POST);
-    $msg[] = $signup->preSubmitAccount();
+    if ($_SESSION['cToken'] !== $_POST['cToken']) {
+        $msg[] = '不正なアクセスが行われました';
+    } else {
+        $signup = new PreSignup($_POST);
+        $msg[] = $signup->preSubmitAccount();
+    }
 }
+
+$cToken = bin2hex(random_bytes(32));
+$_SESSION['cToken'] = $cToken;
 
 $title = 'ユーザー登録 | TwimageDLer';
 ?>
@@ -45,7 +52,7 @@ $title = 'ユーザー登録 | TwimageDLer';
             <dd><input type="email" name="email" maxlength="80" required></dd>
         </div>
     </dl>
-    <input type="hidden" name="token" value="<?= $cToken ?>">
+    <input type="hidden" name="cToken" value="<?= $_SESSION['cToken'] ?>">
     <input type="submit">
 </form>
 </main>
