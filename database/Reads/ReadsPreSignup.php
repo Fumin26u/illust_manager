@@ -16,7 +16,7 @@ class ReadsPreSignup {
 
 	}
 	
-	public function readsPreSignup(): string {
+	public function readsPreSignup() {
 
 		$preEmail = '';
 

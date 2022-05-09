@@ -93,7 +93,7 @@ SQL;
     //     }
     // }
     $preSignup = new ReadsPreSignup($_GET);
-    $preEmail = $preSignup->readsPreSignup();
+    $email = $preSignup->readsPreSignup();
 
     $msg += $err;
 
@@ -118,7 +118,7 @@ $title = 'ユーザー登録 | TwimageDLer';
 <?php include_once($home . '../header.php') ?>
 <main>
 <h2>ユーザー登録</h2>
-<?php if ($preEmail === false) { ?>
+<?php if ($email === false) { ?>
 <div class="description improper">
     <p>この文章が表示されている場合、不適切なアクセスまたはメールアドレスに送付したリンクの有効期限切れとなります。</p>
     <p>お手数ですが、再度確認メールの送付手続きを行って下さい。</p>
