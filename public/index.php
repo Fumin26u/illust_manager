@@ -16,7 +16,6 @@ $err = [];
 require_once($home . '../commonlib.php');
 require_once($home . "../vendor/autoload.php");
 
-v($_SESSION);
 // ログインしているかどうか
 $is_login = isset($_SESSION['user_id']) ? true : false;
 

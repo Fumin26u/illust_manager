@@ -17,6 +17,7 @@ class Login {
 	public function login(): array {
 
 		$err = [];
+		$rows = [];
 
 		try {
 			$pdo = dbConnect();
@@ -39,6 +40,7 @@ class Login {
 			}
 	
 			$pdo = null;
+
 		} catch(PDOException $e) {
 
 			if (DEBUG) echo $e;
@@ -46,7 +48,7 @@ class Login {
 
 		}
 
-		return $err;
+		return [$err, $rows];
 
 	}
 

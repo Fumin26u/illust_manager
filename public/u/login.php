@@ -14,7 +14,10 @@ $err = [];
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     $login = new Login($_POST);
-    $err += $login->login();
+    $login_response = $login->login();
+
+    $err += $login_response[0];
+    $rows = $login_response[1];
 
     if (empty($err)) {
         // 上記エラーが無い場合、セッションにユーザ名とプレミアム会員判定を挿入
