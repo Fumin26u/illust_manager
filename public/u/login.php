@@ -12,31 +12,23 @@ $msg = [];
 $err = [];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $login = new Login($_POST);
+    $login_response = $login->login();
 
-    if ($_SESSION['cToken'] !== $_POST['cToken']) {
+    $err += $login_response[0];
+    $rows = $login_response[1];
 
-        $msg[] = '不正なアクセスが行われました';
+    if (empty($err)) {
+        // 上記エラーが無い場合、セッションにユーザ名とプレミアム会員判定を挿入
+        session_start();
 
-    } else { 
+        $_SESSION['user_id'] = $rows['user_id'];
+        $_SESSION['user_name'] = $rows['user_name'];
+        $_SESSION['premium'] = $rows['premium'];
 
-        $login = new Login($_POST);
-        $login_response = $login->login();
-    
-        $err += $login_response[0];
-        $rows = $login_response[1];
-    
-        if (empty($err)) {
-            // 上記エラーが無い場合、セッションにユーザ名とプレミアム会員判定を挿入
-            session_start();
-    
-            $_SESSION['user_id'] = $rows['user_id'];
-            $_SESSION['user_name'] = $rows['user_name'];
-            $_SESSION['premium'] = $rows['premium'];
-    
-            // トップページにリダイレクト
-            header('location: ../', true, 303);
+        // トップページにリダイレクト
+        header('location: ../', true, 303);
 
-        }
     }
 }
 
