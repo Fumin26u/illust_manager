@@ -10,7 +10,7 @@ class SupportMail {
 	}
 
 	public function SendSupportMail(): bool {
-		$email = isset($_POST['email']) && $_POST['email'] !== '' ? h($_POST['email']) : '記載なし';
+		$email = isset($this->post['email']) && $this->post['email'] !== '' ? h($this->post['email']) : '記載なし';
         $mail_content = <<<EOM
 
 ＝＝＝＝＝＝＝＝＝＝お問い合わせを受信しました＝＝＝＝＝＝＝＝＝＝
@@ -18,21 +18,20 @@ class SupportMail {
 以下の内容でお問い合わせを受信しました。
 
 **フォーム内容**
-{$_POST['type']}
+{$this->post['type']}
 
 **メールアドレス**
 {$email}
 
 **名前**
-{$_POST['name']}
+{$this->post['name']}
 
 **お問い合わせ内容**
-{$_POST['content']}
+{$this->post['content']}
 
 EOM;
             // メール送信の実行
             $to = 'tosufumiya0719@gmail.com';
-            // $from = isset($_POST['email']) && $_POST['email'] !== '' ? h($_POST['email']) : h($_POST['name']);
             $from = 'no-reply@twimagedler.com';
     
             // メールヘッダ
@@ -49,7 +48,7 @@ EOM;
             $is_sent_mail = mb_send_mail($to, $title, $message, $header);
     
         // メールアドレスがセットされていた場合、そのメールアドレス宛に通知を送信
-        if (isset($_POST['email']) && $_POST['email'] !== '') {
+        if (isset($this->post['email']) && $this->post['email'] !== '') {
             $mail_content = <<<EOM
 
 ＝＝＝＝＝＝＝＝＝＝お問い合わせ完了通知＝＝＝＝＝＝＝＝＝＝
@@ -58,16 +57,16 @@ TwimageDLerのご利用ありがとうございます。
 以下の内容でお問い合わせを承りました。
 
 **フォーム内容**
-{$_POST['type']}
+{$this->post['type']}
 
 **メールアドレス**
 {$email}
 
 **名前**
-{$_POST['name']}
+{$this->post['name']}
 
 **お問い合わせ内容**
-{$_POST['content']}
+{$this->post['content']}
 
 本メールは送信専用です。返信は受付できませんのでご了承ください。
 
