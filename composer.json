@@ -13,7 +13,9 @@
             "Database\\Reads\\": "Database/Reads",
             "Database\\Posts\\": "Database/Posts",
             "Values\\": "Values/",
-            "Mail\\": "Mail/"
+            "Mail\\": "Mail/",
+            "Modules\\": "Modules/",
+            "Modules\\ExcAccounts\\": "Modules/ExcAccounts"
         }
     }
 }
