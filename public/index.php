@@ -40,8 +40,11 @@ if (isset($_GET['id']) && $_SERVER['REQUEST_METHOD'] === 'GET') {
     
         // ツイート一覧を取得
         $l = new GetTweets();
-        $_SESSION['tweets'] = $l->getTweets($tweets_query['content'], $latest_dl);
-        $tweets = $_SESSION['tweets'];
+        $tweet_infos = $l->getTweets($tweets_query['content'], $latest_dl);
+        $tweets = $tweet_infos['tweet_info'];
+        $_SESSION['tweets'] = $tweet_infos['tweet_info'];
+        $tweet_users = $tweet_infos['return_tweet_users'];
+        v($tweet_users);
 
         // echo '<pre>';
         // v($_SESSION['tweets']);

@@ -74,6 +74,8 @@ class GetTweets extends APIKey {
         $tc = 0;
         // 返す配列
         $tweet_info = [];
+        // 返すツイートユーザ一覧
+        $return_tweet_users = [];
         // Pagination Token
         $pagination_token = '';
         while ($tweet_count > 0) {
@@ -105,6 +107,7 @@ class GetTweets extends APIKey {
             $tweet_users = [];
             foreach ($tweet_list['includes']['users'] as $u) {
                 $tweet_users[$u['id']] = $u['name'];
+                $return_tweet_users[$u['id']] = $u['name'];
             }
 
             // 画像を[メディアキー] => [URL]の連想配列に変更
@@ -141,6 +144,6 @@ class GetTweets extends APIKey {
             $pagination_token = $tweet_list['meta']['next_token'];
         }
         
-        return $tweet_info;
+        return compact('tweet_info', 'return_tweet_users');
 	}
 }
