@@ -111,7 +111,7 @@ class GetTweets extends APIKey {
             // 動画の場合はサムネ(preview_image_url)
             $tweet_medias = [];            
             foreach ($tweet_list['includes']['media'] as $m) {
-                if (isset($m['url']) || isset($m['preview_image_url'])) $tweet_medias[$m['media_key']] = $m['type'] === 'photo' ? $m['url'] : $m['preview_image_url'];
+                if (isset($m['url']) || isset($m['preview_image_url'])) $tweet_medias[$m['media_key']] = $m['type'] === 'photo' ? rtrim($m['url'], substr($m['url'], -4, 4)) . '?format=jpg&name=orig' : $m['preview_image_url'];
             }
 
             foreach ($tweet_list['data'] as $t) {
