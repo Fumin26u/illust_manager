@@ -29,8 +29,30 @@ class DLImages {
         // Zipに画像ファイルを挿入
         foreach ($images as $i) {
 
-            $fp = $i;
-            $ch = curl_init($fp);
+            // 拡張子を判別
+            switch (substr($i, -13, 3)) {
+                case 'jpg':
+                    $ext = '.jpg';
+                    $offset = -21;
+                    break;
+                case 'png':
+                    $ext = '.png';
+                    $offset = -21;
+                    break;
+                case 'jpe':
+                    $ext = '.jpeg';
+                    $offset = -22;
+                    break;
+                case 'jfi':
+                    $ext = '.jfif';   
+                    $offset = -22;     
+                    break;        
+            }
+
+            $img_name = rtrim($i, substr($i, $offset)) . $ext;
+
+            $fp = $img_name;
+            $ch = curl_init($i);
             curl_setopt($ch, CURLOPT_HEADER, 0);
             curl_setopt($ch, CURLOPT_NOBODY, 0);
 
