@@ -4,6 +4,11 @@ namespace Values;
 class Versions {
     public static $versions_log = [
         [
+            'date' => '2022年6月17日',
+            'version' => '2.0.2',
+            'content' => '取得する画像を原寸サイズのものに変更'
+        ],
+        [
             'date' => '2022年5月1日',
             'version' => '2.0.1',
             'content' => '「前回保存した画像以降を取得」機能がTwitter ID毎に使用できるように、その他不具合の修正'
