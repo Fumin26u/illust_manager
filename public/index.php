@@ -43,9 +43,9 @@ if (isset($_GET['id']) && $_SERVER['REQUEST_METHOD'] === 'GET') {
         $_SESSION['tweets'] = $l->getTweets($tweets_query['content'], $latest_dl);
         $tweets = $_SESSION['tweets'];
 
-        // echo '<pre>';
-        // v($_SESSION['tweets']);
-        // echo '</pre>';
+        echo '<pre>';
+        v($_SESSION['tweets']);
+        echo '</pre>';
 
     }
 }

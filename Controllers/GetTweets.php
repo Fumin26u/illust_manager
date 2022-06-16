@@ -111,7 +111,26 @@ class GetTweets extends APIKey {
             // 動画の場合はサムネ(preview_image_url)
             $tweet_medias = [];            
             foreach ($tweet_list['includes']['media'] as $m) {
-                if (isset($m['url']) || isset($m['preview_image_url'])) $tweet_medias[$m['media_key']] = $m['type'] === 'photo' ? rtrim($m['url'], substr($m['url'], -4, 4)) . '?format=jpg&name=orig' : $m['preview_image_url'];
+                // 拡張子を判別
+                switch (substr($m['url'], -4, 4)) {
+                    case '.jpg':
+                        $trim_str = '.jpg';
+                        $format_name = 'jpg';
+                        break;
+                    case '.png':
+                        $trim_str = '.png';
+                        $format_name = 'png';
+                        break;
+                    case 'jpeg':
+                        $trim_str = '.jpeg';
+                        $format_name = 'jpeg';
+                        break;
+                    case 'jfif':
+                        $trim_str = '.jfif';
+                        $format_name = 'jfif';
+                        break;        
+                }
+                if (isset($m['url']) || isset($m['preview_image_url'])) $tweet_medias[$m['media_key']] = $m['type'] === 'photo' ? rtrim($m['url'], $trim_str) . '?format=' . $format_name . '&name=orig' : $m['preview_image_url'];
             }
 
             foreach ($tweet_list['data'] as $t) {
