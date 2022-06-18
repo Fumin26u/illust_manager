@@ -20,9 +20,6 @@ class DLImages {
         // DLするZipのファイル名
         $dl_file_name = $fileName;
 
-        // 保存先ディレクトリ
-        // $dl_path = $path;
-
         // Zipを開く
         $st = $zip->open($dl_file_name, ZipArchive::CREATE | ZipArchive::OVERWRITE);
 
@@ -30,29 +27,29 @@ class DLImages {
         foreach ($images as $i) {
 
             // 拡張子を判別
-            switch (substr($i, -13, 3)) {
-                case 'jpg':
-                    $ext = '.jpg';
-                    $offset = -21;
+            switch (substr($i, -4, 4)) {
+                case '.jpg':
+                    $trim_str = '.jpg';
+                    $format_name = 'jpg';
                     break;
-                case 'png':
-                    $ext = '.png';
-                    $offset = -21;
+                case '.png':
+                    $trim_str = '.png';
+                    $format_name = 'png';
                     break;
-                case 'jpe':
-                    $ext = '.jpeg';
-                    $offset = -22;
+                case 'jpeg':
+                    $trim_str = '.jpeg';
+                    $format_name = 'jpeg';
                     break;
-                case 'jfi':
-                    $ext = '.jfif';   
-                    $offset = -22;     
+                case 'jfif':
+                    $trim_str = '.jfif';
+                    $format_name = 'jfif';
                     break;        
             }
 
-            $img_name = rtrim($i, substr($i, $offset)) . $ext;
+            $img_url = rtrim($i, $trim_str) . '?format=' . $format_name . '&name=orig';
 
-            $fp = $img_name;
-            $ch = curl_init($i);
+            $fp = $i;
+            $ch = curl_init($img_url);
             curl_setopt($ch, CURLOPT_HEADER, 0);
             curl_setopt($ch, CURLOPT_NOBODY, 0);
 
