@@ -125,7 +125,8 @@ $canonical = "https://imagedler.com/t/privacy_policy.php";
     </div>
     <div>
         <h3>第10条（お問い合わせフォーム）</h3>
-        <p>本ポリシーに関するお問い合わせは、<a href="<?= $home ?>mail/">メールフォーム</a>までお願いいたします。</p>
+        <!-- <p>本ポリシーに関するお問い合わせは、<a href="../mail/">メールフォーム</a>までお願いいたします。</p> -->
+        <p>本ポリシーに関するお問い合わせは、tosufumiya0719Xgmail.com (X -> @に変換)までお願いいたします。</p>
     </div>
 </div>
 </main>

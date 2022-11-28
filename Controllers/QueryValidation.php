@@ -34,7 +34,7 @@ class QueryValidation {
         // count
         // 規定値以外の数値が入っていればエラー
         // v($query['count']);
-        if ($query['count'] <= 0 || $query['count'] > 200) {
+        if ($query['count'] <= 0 || $query['count'] > 300) {
             $err[] = '取得ツイート数が規定値外です。';
         } else {
             $values['count'] = h($query['count']);

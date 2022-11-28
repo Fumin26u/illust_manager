@@ -170,12 +170,12 @@ $canonical = "https://imagedler.com/";
                 </dd>
             </div>
             <div>
-                <dt>取得ツイート数<em>*</em><br>(最大200)</dt>
+                <dt>取得ツイート数<em>*</em><br>(最大300)</dt>
                 <dd>
                     <input 
                         type="number" 
                         name="count" 
-                        value="<?= isset($_GET['count']) ? h($_GET['count']) : '100' ?>" max="200" 
+                        value="<?= isset($_GET['count']) ? h($_GET['count']) : '100' ?>" max="300" 
                         min="10" 
                         step="10" 
                         required

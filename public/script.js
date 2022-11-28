@@ -14,7 +14,7 @@
             if (tweets.checked) {
                 u.style.display = "block";
             } else {
-                u.style.display = "none";
+                // u.style.display = "none";
             }
         });
     }
@@ -22,7 +22,7 @@
         if (tweets.checked) {
             u.style.display = "block";
         } else {
-            u.style.display = "none";
+            // u.style.display = "none";
         }
     }
 }

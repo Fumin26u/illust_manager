@@ -104,7 +104,7 @@ if (isset($_POST['name'])) $name = h($_POST['name']);
         </div>
     </dl>
     <input type="hidden" name="cToken" value="<?= $cToken ?>">
-    <input type="submit" value="送信">
+    <!-- <input type="submit" value="送信"> -->
 </form>
 </main>
 <?php include_once($home . '../footer.php') ?>
