@@ -9,7 +9,7 @@ class SupportMail {
 		$this->post = $post;
 	}
 
-	public function SendSupportMail() {
+	public function SendSupportMail(): bool {
 		$email = isset($this->post['email']) && $this->post['email'] !== '' ? h($this->post['email']) : '記載なし';
         $mail_content = <<<EOM
 
@@ -45,7 +45,7 @@ EOM;
             $message .= brReplace(periodReplace($mail_content));
     
             // 送信＋判定
-            // $is_sent_mail = mb_send_mail($to, $title, $message, $header);
+            $is_sent_mail = mb_send_mail($to, $title, $message, $header);
     
         // メールアドレスがセットされていた場合、そのメールアドレス宛に通知を送信
         if (isset($this->post['email']) && $this->post['email'] !== '') {
@@ -86,9 +86,9 @@ EOM;
             $message .= brReplace(periodReplace($mail_content));
     
             // 送信＋判定
-            // $is_sent_mail = mb_send_mail($to, $title, $message, $header);
+            $is_sent_mail = mb_send_mail($to, $title, $message, $header);
         }
 
-		// return $is_sent_mail;
+		return $is_sent_mail;
 	}
 }
